@@ -36,6 +36,7 @@ class GUI(QtWidgets.QWidget):
         self.setWindowTitle("JdeRobot-TensorFlow detector")
         self.resize(1000, 600)
         self.move(150, 50)
+        self.setWindowIcon(QtGui.QIcon('resources/jderobot.png'))
         self.updGUI.connect(self.update)
 
         # Original image label.
