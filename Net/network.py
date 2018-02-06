@@ -8,6 +8,7 @@ import tarfile
 import zipfile
 import os
 import time
+import threading
 
 from utils import label_map_util
 
@@ -60,6 +61,8 @@ class Detection_Network():
 
 		print("Network created!")
 
+		self.lock = threading.Lock()
+
 		# tensor for initializing the network
 		# (otherwise it takes a little to get the first
 		# prediction)
@@ -75,7 +78,7 @@ class Detection_Network():
 	def predict(self):
 		image_np = self.input_image
 		if image_np is not None:
-
+			self.lock.acquire()
 			image_np.setflags(write=1)
 			image_np_expanded = np.expand_dims(image_np, axis=0)
 			(boxes, scores, classes, num) = self.sess.run(
@@ -90,7 +93,11 @@ class Detection_Network():
 				self.category_index,
 				use_normalized_coordinates=True,
 				line_thickness=8)
+			self.lock.release()
 		else:
 			image_np = np.zeros((360, 240), dtype=np.int32)
 
-		self.output_image = image_np
+		return image_np
+
+	def update(self):
+		self.output_image = self.predict()

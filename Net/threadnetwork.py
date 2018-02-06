@@ -19,13 +19,13 @@ class ThreadNetwork(threading.Thread):
         threading.Thread.__init__(self)
 
 
-        self.activated = True
+        self.activated = False # Deactivated for default (GUI stuff)
     def run(self):
         ''' Updates the thread. '''
         while(True):
             start_time = datetime.now()
             if self.activated:
-                self.network.predict()
+                self.network.update()
             end_time = datetime.now()
 
             dt = end_time - start_time
@@ -34,3 +34,9 @@ class ThreadNetwork(threading.Thread):
 
             if(dtms < t_cycle):
                 time.sleep((t_cycle - dtms) / 1000.0)
+
+    def runOnce(self):
+        '''Processes one image, and then stops again.'''
+        if not self.activated:
+            self.network.update()
+

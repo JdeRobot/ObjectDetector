@@ -31,6 +31,7 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 if __name__ == '__main__':
      
     cam = Camera()
+
     app = QtWidgets.QApplication(sys.argv)
     window = GUI()
     window.setCamera(cam)

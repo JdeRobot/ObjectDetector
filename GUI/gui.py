@@ -14,6 +14,7 @@ from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 import cv2
+
 from Net.network import Detection_Network
 from Net.threadnetwork import ThreadNetwork
 
@@ -27,8 +28,7 @@ class GUI(QtWidgets.QWidget):
         classification.
         '''
 
-        self.network = Detection_Network()
-
+        self.network = Detection_Network() # ask for a model here (?)
         self.t_network = ThreadNetwork(self.network)
         self.t_network.start()
 
@@ -52,10 +52,17 @@ class GUI(QtWidgets.QWidget):
         self.im_pred_label.show()
 
         # Button for configuring detection flow
-        button = QtWidgets.QPushButton(self)
-        button.move(450, 500)
-        button.setText('Toggle\nDetection')
-        button.clicked.connect(self.toggleNetwork)
+        self.button_cont_detection = QtWidgets.QPushButton(self)
+        self.button_cont_detection.move(300, 500)
+        self.button_cont_detection.clicked.connect(self.toggleNetwork)
+
+        # Button for processing a single frame
+        self.button_one_frame = QtWidgets.QPushButton(self)
+        self.button_one_frame.move(600, 500)
+        self.button_one_frame.clicked.connect(self.updateOnce)
+        self.button_one_frame.setText('On-demand detection')
+
+        self.toggleNetwork()
 
         
     def setCamera(self, cam):
@@ -75,13 +82,24 @@ class GUI(QtWidgets.QWidget):
         im_scaled = im.scaled(self.im_label.size())
 
         self.im_label.setPixmap(QtGui.QPixmap.fromImage(im_scaled))
-        
-        im_predicted = QtGui.QImage(im_predicted.data, im_predicted.shape[1], im_prev.shape[0],
-                                    QtGui.QImage.Format_RGB888)
-        im_predicted_scaled = im_predicted.scaled(self.im_pred_label.size())
+        try:
+            im_predicted = QtGui.QImage(im_predicted.data, im_predicted.shape[1], im_prev.shape[0],
+                                        QtGui.QImage.Format_RGB888)
+            im_predicted_scaled = im_predicted.scaled(self.im_pred_label.size())
 
-        self.im_pred_label.setPixmap(QtGui.QPixmap.fromImage(im_predicted_scaled))
+            self.im_pred_label.setPixmap(QtGui.QPixmap.fromImage(im_predicted_scaled))
+        except AttributeError:
+            pass
         
     def toggleNetwork(self):
         self.t_network.activated = not self.t_network.activated
-        print('Now is: {}'.format(self.t_network.activated))
+
+        if self.t_network.activated:
+            self.button_cont_detection.setStyleSheet('QPushButton {color: red;}')
+            self.button_cont_detection.setText('Switch off\nContinuous\nDetection')
+        else:
+            self.button_cont_detection.setStyleSheet('QPushButton {color: green;}')
+            self.button_cont_detection.setText('Switch on\nContinuous\nDetection')
+
+    def updateOnce(self):
+        self.t_network.runOnce()
