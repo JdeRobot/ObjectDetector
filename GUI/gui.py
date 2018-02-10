@@ -28,15 +28,12 @@ class GUI(QtWidgets.QWidget):
         classification.
         '''
 
-        self.network = Detection_Network() # ask for a model here (?)
-        self.t_network = ThreadNetwork(self.network)
-        self.t_network.start()
 
         QtWidgets.QWidget.__init__(self, parent)
         self.setWindowTitle("JdeRobot-TensorFlow detector")
-        self.resize(1000, 600)
+        self.resize(1200, 500)
         self.move(150, 50)
-        self.setWindowIcon(QtGui.QIcon('resources/jderobot.png'))
+        self.setWindowIcon(QtGui.QIcon('GUI/resources/jderobot.png'))
         self.updGUI.connect(self.update)
 
         # Original image label.
@@ -45,23 +42,39 @@ class GUI(QtWidgets.QWidget):
         self.im_label.move(25, 90)
         self.im_label.show()
 
-        # Predicted image label.
+        # Processed image label.
         self.im_pred_label = QtWidgets.QLabel(self)
         self.im_pred_label.resize(450, 350)
-        self.im_pred_label.move(525, 90)
+        self.im_pred_label.move(725, 90)
         self.im_pred_label.show()
 
         # Button for configuring detection flow
         self.button_cont_detection = QtWidgets.QPushButton(self)
-        self.button_cont_detection.move(300, 500)
+        self.button_cont_detection.move(550, 100)
         self.button_cont_detection.clicked.connect(self.toggleNetwork)
+
 
         # Button for processing a single frame
         self.button_one_frame = QtWidgets.QPushButton(self)
-        self.button_one_frame.move(600, 500)
+        self.button_one_frame.move(550, 200)
         self.button_one_frame.clicked.connect(self.updateOnce)
-        self.button_one_frame.setText('On-demand detection')
+        self.button_one_frame.setText('On-demand\ndetection')
 
+        # Logo
+        self.logo_label = QtWidgets.QLabel(self)
+        self.logo_label.resize(150, 150)
+        self.logo_label.move(520, 300)
+        self.logo_label.setScaledContents(True)
+
+        logo_img = QtGui.QImage()
+        logo_img.load('GUI/resources/jderobot.png')
+        self.logo_label.setPixmap(QtGui.QPixmap.fromImage(logo_img))
+        self.logo_label.show()
+
+        # Network initialization.
+        self.network = Detection_Network()
+        self.t_network = ThreadNetwork(self.network)
+        self.t_network.start()
         self.toggleNetwork()
 
         
