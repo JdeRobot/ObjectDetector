@@ -78,7 +78,6 @@ class Detection_Network():
 	def predict(self):
 		image_np = self.input_image
 		if image_np is not None:
-			self.lock.acquire()
 			image_np.setflags(write=1)
 			image_np_expanded = np.expand_dims(image_np, axis=0)
 			(boxes, scores, classes, num) = self.sess.run(
@@ -92,12 +91,13 @@ class Detection_Network():
 				np.squeeze(scores),
 				self.category_index,
 				use_normalized_coordinates=True,
-				line_thickness=8)
-			self.lock.release()
+				line_thickness=6)
 		else:
 			image_np = np.zeros((360, 240), dtype=np.int32)
 
 		return image_np
 
 	def update(self):
+		self.lock.acquire()
 		self.output_image = self.predict()
+		self.lock.release()

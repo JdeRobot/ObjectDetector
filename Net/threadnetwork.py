@@ -8,7 +8,7 @@ import time
 import threading
 from datetime import datetime
 
-t_cycle = 400  # ms
+t_cycle = 150  # ms
 
 
 class ThreadNetwork(threading.Thread):
@@ -17,9 +17,8 @@ class ThreadNetwork(threading.Thread):
         ''' Threading class for Camera. '''
         self.network = network # 'is' for modifying the network (alias it on self.network)
         threading.Thread.__init__(self)
-
-
         self.activated = False # Deactivated for default (GUI stuff)
+
     def run(self):
         ''' Updates the thread. '''
         while(True):
