@@ -7,3 +7,9 @@ ObjectDetector:
     Name: cameraA
 
   NodeName: dl-objectdetector
+
+Model:
+  MODEL_NAME: ssd_mobilenet_v1_coco_2017_11_17         # Name of model, same as the tar.gz file present in Net Folder
+  PATH_TO_CKPT: Net/ssd_mobilenet_v1_coco_2017_11_17/frozen_inference_graph.pb     # Path to frozen inference graph
+  PATH_TO_LABELS: Net/data/mscoco_label_map.pbtxt  # Path to labels file
+  NUM_CLASSES: 90      
