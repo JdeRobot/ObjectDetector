@@ -40,6 +40,7 @@ class Camera:
         jdrc = comm.init(cfg, 'ObjectDetector')
 
 
+        self.net_model = cfg.getNode()['Model']
 
         self.lock = threading.Lock()
 
