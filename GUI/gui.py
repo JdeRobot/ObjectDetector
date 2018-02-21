@@ -58,7 +58,7 @@ class GUI(QtWidgets.QWidget):
 
         # Button for processing a single frame
         self.button_one_frame = QtWidgets.QPushButton(self)
-        self.button_one_frame.move(550, 200)
+        self.button_one_frame.move(555, 200)
         self.button_one_frame.clicked.connect(self.updateOnce)
         self.button_one_frame.setText('Step')
 
@@ -73,25 +73,17 @@ class GUI(QtWidgets.QWidget):
         self.logo_label.setPixmap(QtGui.QPixmap.fromImage(logo_img))
         self.logo_label.show()
 
-        # Network initialization.
 
-
-        try:
-            cfg = config.load(sys.argv[1])
-        except IndexError:
-            raise SystemExit('Missing YML file. Usage: python2 objectdetector.py objectdetector.yml')
-
-        net_model = cfg.getNode()['Model']
-
-        self.network = Detection_Network(net_model)
+    def setNetwork(self, model):
+        self.network = Detection_Network(model)
         self.t_network = ThreadNetwork(self.network)
         self.t_network.start()
         self.toggleNetwork()
 
-
     def setCamera(self, cam):
         ''' Declares the Camera object '''
         self.cam = cam
+
 
     def update(self):
         ''' Updates the GUI for every time the thread change '''
@@ -119,9 +111,9 @@ class GUI(QtWidgets.QWidget):
         self.t_network.activated = not self.t_network.activated
 
         if self.t_network.activated:
-            self.button_cont_detection.setStyleSheet('QPushButton {color: red;}')
-        else:
             self.button_cont_detection.setStyleSheet('QPushButton {color: green;}')
+        else:
+            self.button_cont_detection.setStyleSheet('QPushButton {color: red;}')
 
     def updateOnce(self):
         self.t_network.runOnce()
