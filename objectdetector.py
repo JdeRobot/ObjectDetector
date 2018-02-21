@@ -35,6 +35,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = GUI()
     window.setCamera(cam)
+    window.setNetwork(cam.net_model)
     window.show()
     
     # Threading camera
