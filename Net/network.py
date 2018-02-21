@@ -10,6 +10,7 @@ import os
 import time
 import threading
 
+
 from utils import label_map_util
 
 from utils import visualization_utils as vis_util
@@ -20,19 +21,28 @@ import cv2
 class Detection_Network():
 	''' Class to create a tensorflow network, based on SSD detection trained on COCO dataset
 	(for the moment). At its creation, it imports the weight from the frozen model.'''
-	def __init__(self):
-		# path to the downloaded model.
-		MODEL_NAME = 'Net/' + 'ssd_mobilenet_v1_coco_2017_11_17'
-		# the class is called from the root dir of the project!
-		MODEL_FILE = MODEL_NAME + '.tar.gz'
+	def __init__(self, net_model):
 
-		# path to the frozen graph (inside the model).
-		PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
 
-		# path to the labels (id-name association).
-		PATH_TO_LABELS = os.path.join('Net/data', 'mscoco_label_map.pbtxt')
 
-		NUM_CLASSES = 90
+		try:
+			# path to the downloaded model.
+			MODEL_NAME = 'Net/' + net_model['MODEL_NAME']
+			# the class is called from the root dir of the project!
+			MODEL_FILE = MODEL_NAME + '.tar.gz'
+
+			# path to the frozen graph (inside the model).
+			PATH_TO_CKPT = net_model['PATH_TO_CKPT']
+
+			# path to the labels (id-name association).
+			PATH_TO_LABELS = net_model['PATH_TO_LABELS']
+
+			NUM_CLASSES = net_model['NUM_CLASSES']
+
+		except:
+			raise SystemExit('Incorrect or Incomplete Model Details in Yml file')
+
+
 		# analysing the .tar model.
 		tar_file = tarfile.open(MODEL_FILE)
 		for file in tar_file.getmembers(): # checking if frozen graph exists.
