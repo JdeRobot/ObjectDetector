@@ -14,6 +14,7 @@ from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 import cv2
+import config
 
 from Net.network import Detection_Network
 from Net.threadnetwork import ThreadNetwork
@@ -72,12 +73,21 @@ class GUI(QtWidgets.QWidget):
         self.logo_label.show()
 
         # Network initialization.
-        self.network = Detection_Network()
+
+
+        try:
+            cfg = config.load(sys.argv[1])
+        except IndexError:
+            raise SystemExit('Missing YML file. Usage: python2 objectdetector.py objectdetector.yml')
+
+        net_model = cfg.getNode()['Model']
+
+        self.network = Detection_Network(net_model)
         self.t_network = ThreadNetwork(self.network)
         self.t_network.start()
         self.toggleNetwork()
 
-        
+
     def setCamera(self, cam):
         ''' Declares the Camera object '''
         self.cam = cam
@@ -103,7 +113,7 @@ class GUI(QtWidgets.QWidget):
             self.im_pred_label.setPixmap(QtGui.QPixmap.fromImage(im_predicted_scaled))
         except AttributeError:
             pass
-        
+
     def toggleNetwork(self):
         self.t_network.activated = not self.t_network.activated
 

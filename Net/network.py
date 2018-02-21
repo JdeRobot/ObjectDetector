@@ -9,7 +9,7 @@ import zipfile
 import os
 import time
 import threading
-import config
+
 
 from utils import label_map_util
 
@@ -21,31 +21,26 @@ import cv2
 class Detection_Network():
 	''' Class to create a tensorflow network, based on SSD detection trained on COCO dataset
 	(for the moment). At its creation, it imports the weight from the frozen model.'''
-	def __init__(self):
+	def __init__(self, net_model):
 
-
-		try:
-			cfg = config.load(sys.argv[1])
-		except IndexError:
-			raise SystemExit('Missing YML file. Usage: python2 objectdetector.py objectdetector.yml')
 
 
 		try:
 			# path to the downloaded model.
-			MODEL_NAME = 'Net/' + cfg.getProperty("Model.MODEL_NAME")
+			MODEL_NAME = 'Net/' + net_model['MODEL_NAME']
 			# the class is called from the root dir of the project!
 			MODEL_FILE = MODEL_NAME + '.tar.gz'
 
 			# path to the frozen graph (inside the model).
-			PATH_TO_CKPT = cfg.getProperty("Model.PATH_TO_CKPT")
+			PATH_TO_CKPT = net_model['PATH_TO_CKPT']
 
 			# path to the labels (id-name association).
-			PATH_TO_LABELS = cfg.getProperty("Model.PATH_TO_LABELS")
+			PATH_TO_LABELS = net_model['PATH_TO_LABELS']
 
-			NUM_CLASSES = cfg.getProperty("Model.NUM_CLASSES")
+			NUM_CLASSES = net_model['NUM_CLASSES']
 
 		except:
-			raise SystemExit('Incomplete Model Details in Yml file')
+			raise SystemExit('Incorrect or Incomplete Model Details in Yml file')
 
 
 		# analysing the .tar model.
