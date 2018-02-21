@@ -1,7 +1,5 @@
 import tensorflow as tf
 import numpy as np
-from cprint import *
-
 import six.moves.urllib as urllib
 import sys
 import tarfile
