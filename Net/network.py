@@ -44,7 +44,7 @@ class DetectionNetwork():
 		for file in tar_file.getmembers(): # checking if frozen graph exists.
 			file_name = os.path.basename(file.name)
 			if 'frozen_inference_graph.pb' in file_name:
-				tar_file.extract(file, os.getcwd() + '/Camera/network') # extract everything.
+				tar_file.extract(file, os.getcwd() + 'Net') # extract everything.
 
 		detection_graph = tf.Graph() # new graph instance.
 		with detection_graph.as_default():
