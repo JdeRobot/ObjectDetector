@@ -18,35 +18,20 @@ import threading
 import cv2
 import numpy as np
 import tensorflow as tf
-from Net.network import Detection_Network
-import config
-import comm
-
 
 class Camera:
 
-    def __init__ (self):
+    def __init__ (self, cam):
         ''' Camera class gets images from live video and transform them
         in order to predict the digit in the image.
         '''
         status = 0
 
-        # Creation of the camera through the comm-ICE proxy.
-        try:
-            cfg = config.load(sys.argv[1])
-        except IndexError:
-            raise SystemExit('Missing YML file. Usage: python2 objectdetector.py objectdetector.yml')
-        
-        jdrc = comm.init(cfg, 'ObjectDetector')
-
-
+        self.cam = cam
 
         self.lock = threading.Lock()
 
         try:
-
-            self.cam = jdrc.getCameraClient('ObjectDetector.Camera')
-
             if self.cam.hasproxy():
                 self.im = self.cam.getImage()
                 self.im_height = self.im.height
@@ -63,9 +48,7 @@ class Camera:
             status = 1
 
     def getImage(self):
-        ''' Gets the image from the webcam and returns the original
-        image and the output image from the detection network.
-        '''
+        ''' Gets the image from the webcam and returns it. '''
         if self.cam:
             self.lock.acquire()
             im = np.zeros((self.im_height, self.im_width, 3), np.uint8)

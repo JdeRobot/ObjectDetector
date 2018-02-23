@@ -16,12 +16,10 @@ from utils import visualization_utils as vis_util
 import cv2
 
 
-class Detection_Network():
+class DetectionNetwork():
 	''' Class to create a tensorflow network, based on SSD detection trained on COCO dataset
 	(for the moment). At its creation, it imports the weight from the frozen model.'''
 	def __init__(self, net_model):
-
-
 
 		try:
 			# path to the downloaded model.
@@ -81,6 +79,7 @@ class Detection_Network():
 
 		self.input_image = None
 		self.output_image = None
+		self.activated = True
 
 
 	def predict(self):
@@ -103,9 +102,16 @@ class Detection_Network():
 		else:
 			image_np = np.zeros((360, 240), dtype=np.int32)
 
-		return image_np
+		self.output_image = image_np
 
-	def update(self):
-		self.lock.acquire()
-		self.output_image = self.predict()
-		self.lock.release()
+	def setInputImage(self, im):
+		''' Overrides the input image of the network. '''
+		self.input_image = im
+
+	def getOutputImage(self):
+		''' Returns the image with the predicted objects on it. '''
+		return self.output_image
+
+	def toggleNetwork(self):
+		''' Toggles the network on/off '''
+		self.activated = not self.activated
