@@ -17,14 +17,14 @@ class ThreadNetwork(threading.Thread):
         ''' Threading class for Camera. '''
         self.network = network # 'is' for modifying the network (alias it on self.network)
         threading.Thread.__init__(self)
-        self.activated = False # Deactivated for default (GUI stuff)
+
 
     def run(self):
         ''' Updates the thread. '''
         while(True):
             start_time = datetime.now()
-            if self.activated:
-                self.network.update()
+            if self.network.activated:
+                self.network.predict()
             end_time = datetime.now()
 
             dt = end_time - start_time
@@ -36,6 +36,6 @@ class ThreadNetwork(threading.Thread):
 
     def runOnce(self):
         '''Processes one image, and then stops again.'''
-        if not self.activated:
-            self.network.update()
+        if not self.network.activated:
+            self.network.predict()
 

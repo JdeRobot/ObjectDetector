@@ -16,9 +16,6 @@ from PyQt5 import QtWidgets
 import cv2
 import config
 
-from Net.network import Detection_Network
-from Net.threadnetwork import ThreadNetwork
-
 class GUI(QtWidgets.QWidget):
 
     updGUI = QtCore.pyqtSignal()
@@ -54,6 +51,10 @@ class GUI(QtWidgets.QWidget):
         self.button_cont_detection.move(550, 100)
         self.button_cont_detection.clicked.connect(self.toggleNetwork)
         self.button_cont_detection.setText('Continuous')
+<<<<<<< HEAD
+        self.button_cont_detection.setStyleSheet('QPushButton {color: green;}')
+=======
+>>>>>>> 0b212de57763b36ab616dbd991f58c6e9e3bbe7a
 
 
         # Button for processing a single frame
@@ -74,24 +75,34 @@ class GUI(QtWidgets.QWidget):
         self.logo_label.show()
 
 
+<<<<<<< HEAD
+=======
     def setNetwork(self, model):
         self.network = Detection_Network(model)
         self.t_network = ThreadNetwork(self.network)
         self.t_network.start()
         self.toggleNetwork()
 
+>>>>>>> 0b212de57763b36ab616dbd991f58c6e9e3bbe7a
     def setCamera(self, cam):
         ''' Declares the Camera object '''
         self.cam = cam
 
 
+<<<<<<< HEAD
+    def setNetwork(self, network, t_network):
+        ''' Declares the Network object and its corresponding control thread. '''
+        self.network = network
+        self.t_network = t_network
+
+=======
+>>>>>>> 0b212de57763b36ab616dbd991f58c6e9e3bbe7a
     def update(self):
         ''' Updates the GUI for every time the thread change '''
         # We get the original image and display it.
         im_prev = self.cam.getImage()
-        self.network.input_image = im_prev
 
-        im_predicted = self.network.output_image
+        self.network.setInputImage(im_prev)
 
         im = QtGui.QImage(im_prev.data, im_prev.shape[1], im_prev.shape[0],
                           QtGui.QImage.Format_RGB888)
@@ -99,6 +110,9 @@ class GUI(QtWidgets.QWidget):
 
         self.im_label.setPixmap(QtGui.QPixmap.fromImage(im_scaled))
         try:
+
+            im_predicted = self.network.getOutputImage()
+
             im_predicted = QtGui.QImage(im_predicted.data, im_predicted.shape[1], im_prev.shape[0],
                                         QtGui.QImage.Format_RGB888)
             im_predicted_scaled = im_predicted.scaled(self.im_pred_label.size())
@@ -108,9 +122,13 @@ class GUI(QtWidgets.QWidget):
             pass
 
     def toggleNetwork(self):
-        self.t_network.activated = not self.t_network.activated
+        self.network.toggleNetwork()
 
+<<<<<<< HEAD
+        if self.network.activated:
+=======
         if self.t_network.activated:
+>>>>>>> 0b212de57763b36ab616dbd991f58c6e9e3bbe7a
             self.button_cont_detection.setStyleSheet('QPushButton {color: green;}')
         else:
             self.button_cont_detection.setStyleSheet('QPushButton {color: red;}')

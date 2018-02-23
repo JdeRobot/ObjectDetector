@@ -25,22 +25,46 @@ from Camera.camera import Camera
 from Camera.threadcamera import ThreadCamera
 from GUI.gui import GUI
 from GUI.threadgui import ThreadGUI
+from Net.network import DetectionNetwork
+from Net.threadnetwork import ThreadNetwork
+
+import config
+import comm
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 if __name__ == '__main__':
 
-    cam = Camera()
+
+    try:
+        cfg = config.load(sys.argv[1])
+    except IndexError:
+        raise SystemExit('Missing YML file. Usage: python2 objectdetector.py objectdetector.yml')
+    
+    jdrc = comm.init(cfg, 'ObjectDetector')
+    proxy = jdrc.getCameraClient('ObjectDetector.Camera')
+
+    network_model = cfg.getNode()['Model']
+
+    cam = Camera(proxy)
+    t_cam = ThreadCamera(cam)
+    t_cam.start()
+
+    network = DetectionNetwork(network_model)
+    t_network = ThreadNetwork(network)
+    t_network.start()
 
     app = QtWidgets.QApplication(sys.argv)
     window = GUI()
     window.setCamera(cam)
+<<<<<<< HEAD
+    window.setNetwork(network, t_network)
+=======
     window.setNetwork(cam.net_model)
+>>>>>>> 0b212de57763b36ab616dbd991f58c6e9e3bbe7a
     window.show()
     
     # Threading camera
-    t_cam = ThreadCamera(cam)
-    t_cam.start()
     
     # Threading GUI
     t_gui = ThreadGUI(window)
