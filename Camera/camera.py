@@ -27,21 +27,7 @@ class Camera:
         '''
         status = 0
 
-<<<<<<< HEAD
         self.cam = cam
-=======
-        # Creation of the camera through the comm-ICE proxy.
-        try:
-            cfg = config.load(sys.argv[1])
-        except IndexError:
-            raise SystemExit('Missing YML file. Usage: python2 objectdetector.py objectdetector.yml')
-        
-        jdrc = comm.init(cfg, 'ObjectDetector')
-
-
-        self.net_model = cfg.getNode()['Model']
->>>>>>> 0b212de57763b36ab616dbd991f58c6e9e3bbe7a
-
         self.lock = threading.Lock()
 
         try:
