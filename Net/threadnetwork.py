@@ -7,8 +7,9 @@
 import time
 import threading
 from datetime import datetime
+import numpy as np
 
-t_cycle = 150  # ms
+t_cycle = 50  # ms
 
 
 class ThreadNetwork(threading.Thread):
@@ -31,6 +32,10 @@ class ThreadNetwork(threading.Thread):
             dtms = ((dt.days * 24 * 60 * 60 + dt.seconds) * 1000 +
                     dt.microseconds / 1000.0)
 
+            if self.network.activated:
+                self.framerate = int(1000.0 / dtms)
+            # print self.framerate
+
             if(dtms < t_cycle):
                 time.sleep((t_cycle - dtms) / 1000.0)
 
@@ -38,4 +43,3 @@ class ThreadNetwork(threading.Thread):
         '''Processes one image, and then stops again.'''
         if not self.network.activated:
             self.network.predict()
-
