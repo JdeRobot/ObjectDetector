@@ -46,6 +46,12 @@ class GUI(QtWidgets.QWidget):
         self.im_pred_label.move(725, 90)
         self.im_pred_label.show()
 
+        # Framerate label.
+        self.framerate_label = QtWidgets.QLabel(self)
+        self.framerate_label.move(580, 145)
+        self.framerate_label.resize(50,40)
+        self.framerate_label.show()
+
         # Button for configuring detection flow
         self.button_cont_detection = QtWidgets.QPushButton(self)
         self.button_cont_detection.move(550, 100)
@@ -104,6 +110,8 @@ class GUI(QtWidgets.QWidget):
             self.im_pred_label.setPixmap(QtGui.QPixmap.fromImage(im_predicted_scaled))
         except AttributeError:
             pass
+
+        self.framerate_label.setText("%d fps" % (self.t_network.framerate))
 
     def toggleNetwork(self):
         self.network.toggleNetwork()
