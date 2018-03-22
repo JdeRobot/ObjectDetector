@@ -3,7 +3,7 @@
 #
 # @author: naxvm
 #
-# It receives images from a live video and classify them into digits 
+# It receives images from a live video and classify them into digits
 # employing a convolutional neural network, based on TensorFlow Deep Learning middleware.
 # It shows the live video and the results in a GUI.
 #
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         cfg = config.load(sys.argv[1])
     except IndexError:
         raise SystemExit('Missing YML file. Usage: python2 objectdetector.py objectdetector.yml')
-    
+
     jdrc = comm.init(cfg, 'ObjectDetector')
     proxy = jdrc.getCameraClient('ObjectDetector.Camera')
 
@@ -51,6 +51,7 @@ if __name__ == '__main__':
     t_cam.start()
 
     network = DetectionNetwork(network_model)
+    network.setCamera(cam)
     t_network = ThreadNetwork(network)
     t_network.start()
 
@@ -59,12 +60,11 @@ if __name__ == '__main__':
     window.setCamera(cam)
     window.setNetwork(network, t_network)
     window.show()
-    
+
     # Threading camera
-    
+
     # Threading GUI
     t_gui = ThreadGUI(window)
     t_gui.start()
-    
-    sys.exit(app.exec_())
 
+    sys.exit(app.exec_())

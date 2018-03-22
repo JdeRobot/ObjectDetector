@@ -8,13 +8,13 @@ import os
 import time
 import threading
 
+from datetime import datetime
 
-from utils import label_map_util
-
-from utils import visualization_utils as vis_util
 
 import cv2
 
+
+from utils import label_map_util
 
 class DetectionNetwork():
 	''' Class to create a tensorflow network, based on SSD detection trained on COCO dataset
@@ -36,7 +36,7 @@ class DetectionNetwork():
 			NUM_CLASSES = net_model['NUM_CLASSES']
 
 		except:
-			raise SystemExit('Incorrect or Incomplete Model Details in Yml file')
+			raise SystemExit('Incorrect or incomplete model details in YML file')
 
 
 		# analysing the .tar model.
@@ -58,60 +58,34 @@ class DetectionNetwork():
 		categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES)
 		self.category_index = label_map_util.create_category_index(categories)
 
+
 		self.sess = tf.Session(graph=detection_graph)
 		self.image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+		# NCHW conversion. not possible
+		#self.image_tensor = tf.transpose(self.image_tensor, [0, 3, 1, 2])
 		self.detection_boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
 		self.detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
 		self.detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
 		self.num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 
-		print("Network created!")
-
 		self.lock = threading.Lock()
 
-		# tensor for initializing the network
-		# (otherwise it takes a little to get the first
-		# prediction)
+		# Dummy initialization (otherwise it takes longer then)
 		dummy_tensor = np.zeros((1,1,1,3), dtype=np.int32)
 		self.sess.run(
 				[self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections],
 				feed_dict={self.image_tensor: dummy_tensor})
 
-		self.input_image = None
-		self.output_image = None
-		self.activated = True
+		print("Network ready!")
+
+	def setCamera(self, cam):
+		self.cam = cam
 
 
 	def predict(self):
-		image_np = self.input_image
-		if image_np is not None:
-			image_np.setflags(write=1)
-			image_np_expanded = np.expand_dims(image_np, axis=0)
-			(boxes, scores, classes, num) = self.sess.run(
+		input_image = self.cam.getImage()
+		image_np_expanded = np.expand_dims(input_image, axis=0)
+		with tf.device('/device:GPU:0'):
+			(self.boxes, self.scores, self.classes, self.num) = self.sess.run(
 				[self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections],
 				feed_dict={self.image_tensor: image_np_expanded})
-			# visualization of the results.
-			vis_util.visualize_boxes_and_labels_on_image_array(
-				image_np,
-				np.squeeze(boxes),
-				np.squeeze(classes).astype(np.int32),
-				np.squeeze(scores),
-				self.category_index,
-				use_normalized_coordinates=True,
-				line_thickness=6)
-		else:
-			image_np = np.zeros((360, 240), dtype=np.int32)
-
-		self.output_image = image_np
-
-	def setInputImage(self, im):
-		''' Overrides the input image of the network. '''
-		self.input_image = im
-
-	def getOutputImage(self):
-		''' Returns the image with the predicted objects on it. '''
-		return self.output_image
-
-	def toggleNetwork(self):
-		''' Toggles the network on/off '''
-		self.activated = not self.activated

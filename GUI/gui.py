@@ -16,6 +16,10 @@ from PyQt5 import QtWidgets
 import cv2
 import config
 
+from Net.utils import visualization_utils as vis_util
+import numpy as np
+
+
 class GUI(QtWidgets.QWidget):
 
     updGUI = QtCore.pyqtSignal()
@@ -25,8 +29,6 @@ class GUI(QtWidgets.QWidget):
         preview the live video as well as the results of the real-time
         classification.
         '''
-
-
         QtWidgets.QWidget.__init__(self, parent)
         self.setWindowTitle("JdeRobot-TensorFlow detector")
         self.resize(1200, 500)
@@ -84,42 +86,62 @@ class GUI(QtWidgets.QWidget):
     def setNetwork(self, network, t_network):
         ''' Declares the Network object and its corresponding control thread. '''
         self.network = network
+        # Copy the category index fetched from the network
+        self.category_index = self.network.category_index
         self.t_network = t_network
 
 
     def update(self):
         ''' Updates the GUI for every time the thread change '''
         # We get the original image and display it.
-        im_prev = self.cam.getImage()
-
-        self.network.setInputImage(im_prev)
-
-        im = QtGui.QImage(im_prev.data, im_prev.shape[1], im_prev.shape[0],
+        self.im_prev = self.cam.getImage()
+        im = QtGui.QImage(self.im_prev.data, self.im_prev.shape[1], self.im_prev.shape[0],
                           QtGui.QImage.Format_RGB888)
-        im_scaled = im.scaled(self.im_label.size())
+        self.im_scaled = im.scaled(self.im_label.size())
 
-        self.im_label.setPixmap(QtGui.QPixmap.fromImage(im_scaled))
-        try:
+        self.im_label.setPixmap(QtGui.QPixmap.fromImage(self.im_scaled))
 
-            im_predicted = self.network.getOutputImage()
-
-            im_predicted = QtGui.QImage(im_predicted.data, im_predicted.shape[1], im_prev.shape[0],
-                                        QtGui.QImage.Format_RGB888)
-            im_predicted_scaled = im_predicted.scaled(self.im_pred_label.size())
-
-            self.im_pred_label.setPixmap(QtGui.QPixmap.fromImage(im_predicted_scaled))
-        except AttributeError:
-            pass
+        if self.t_network.is_activated:
+            self.renderModifiedImage(self.im_prev)
 
         self.framerate_label.setText("%d fps" % (self.t_network.framerate))
 
-    def toggleNetwork(self):
-        self.network.toggleNetwork()
 
-        if self.network.activated:
+    def toggleNetwork(self):
+        self.t_network.toggle()
+
+        if self.t_network.is_activated:
             self.button_cont_detection.setStyleSheet('QPushButton {color: green;}')
         else:
             self.button_cont_detection.setStyleSheet('QPushButton {color: red;}')
 
     def updateOnce(self):
         self.t_network.runOnce()
+        self.renderModifiedImage(self.im_prev)
+
+
+    def renderModifiedImage(self, im):
+        detection_boxes = self.network.boxes
+        detection_scores = self.network.scores
+        detection_classes = self.network.classes
+        num_detections = self.network.num
+
+        image_np = np.copy(im)
+
+
+        vis_util.visualize_boxes_and_labels_on_image_array(
+        				image_np,
+        				np.squeeze(detection_boxes),
+        				np.squeeze(detection_classes).astype(np.int32),
+        				np.squeeze(detection_scores),
+        				self.category_index,
+        				use_normalized_coordinates=True,
+        				line_thickness=6)
+
+
+
+        im = QtGui.QImage(image_np.data, image_np.shape[1], image_np.shape[0],
+                          QtGui.QImage.Format_RGB888)
+
+        im_drawn = im.scaled(self.im_label.size())
+        self.im_pred_label.setPixmap(QtGui.QPixmap.fromImage(im_drawn))
