@@ -9,14 +9,18 @@ import threading
 from datetime import datetime
 import numpy as np
 
-t_cycle = 50  # ms
+t_cycle = 150  # ms
 
 
 class ThreadNetwork(threading.Thread):
 
     def __init__(self, network):
         ''' Threading class for Camera. '''
-        self.network = network # 'is' for modifying the network (alias it on self.network)
+        self.network = network
+
+        self.framerate = 0
+        self.is_activated = True
+
         threading.Thread.__init__(self)
 
 
@@ -24,7 +28,7 @@ class ThreadNetwork(threading.Thread):
         ''' Updates the thread. '''
         while(True):
             start_time = datetime.now()
-            if self.network.activated:
+            if self.is_activated:
                 self.network.predict()
             end_time = datetime.now()
 
@@ -32,14 +36,15 @@ class ThreadNetwork(threading.Thread):
             dtms = ((dt.days * 24 * 60 * 60 + dt.seconds) * 1000 +
                     dt.microseconds / 1000.0)
 
-            if self.network.activated:
+            if self.is_activated:
                 self.framerate = int(1000.0 / dtms)
-            # print self.framerate
 
             if(dtms < t_cycle):
                 time.sleep((t_cycle - dtms) / 1000.0)
 
+    def toggle(self):
+        self.is_activated = not self.is_activated
+
     def runOnce(self):
-        '''Processes one image, and then stops again.'''
-        if not self.network.activated:
+        if not self.is_activated:
             self.network.predict()
