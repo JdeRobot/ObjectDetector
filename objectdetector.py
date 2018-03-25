@@ -46,6 +46,7 @@ if __name__ == '__main__':
 
     network_model = cfg.getNode()['Model']
 
+
     cam = Camera(proxy)
     t_cam = ThreadCamera(cam)
     t_cam.start()
@@ -57,14 +58,20 @@ if __name__ == '__main__':
 
     app = QtWidgets.QApplication(sys.argv)
     window = GUI()
-    window.setCamera(cam)
+    window.setCamera(cam, t_cam)
     window.setNetwork(network, t_network)
     window.show()
-
-    # Threading camera
 
     # Threading GUI
     t_gui = ThreadGUI(window)
     t_gui.start()
+
+
+    print("")
+    print("Requested timers:")
+    print("    Camera: %d ms" % (t_cam.t_cycle))
+    print("    GUI: %d ms" % (t_gui.t_cycle))
+    print("    Network: %d ms" % (t_network.t_cycle))
+    print("")
 
     sys.exit(app.exec_())

@@ -9,13 +9,16 @@ import threading
 from datetime import datetime
 import numpy as np
 
-t_cycle = 150  # ms
 
 
 class ThreadNetwork(threading.Thread):
 
+
     def __init__(self, network):
         ''' Threading class for Camera. '''
+
+        self.t_cycle = 100  # ms
+
         self.network = network
 
         self.framerate = 0
@@ -37,10 +40,13 @@ class ThreadNetwork(threading.Thread):
                     dt.microseconds / 1000.0)
 
             if self.is_activated:
-                self.framerate = int(1000.0 / dtms)
+                delta = max(self.t_cycle, dtms)
+                self.framerate = int(1000.0 / delta)
+            else:
+                self.framerate = 0
 
-            if(dtms < t_cycle):
-                time.sleep((t_cycle - dtms) / 1000.0)
+            if(dtms < self.t_cycle):
+                time.sleep((self.t_cycle - dtms) / 1000.0)
 
     def toggle(self):
         self.is_activated = not self.is_activated
