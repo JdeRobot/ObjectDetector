@@ -42,17 +42,23 @@ class GUI(QtWidgets.QWidget):
         self.im_label.move(25, 90)
         self.im_label.show()
 
+        # Video capture framerate label.
+        self.video_framerate_label = QtWidgets.QLabel(self)
+        self.video_framerate_label.move(220, 450)
+        self.video_framerate_label.resize(50, 40)
+        self.video_framerate_label.show()
+
         # Processed image label.
         self.im_pred_label = QtWidgets.QLabel(self)
         self.im_pred_label.resize(450, 350)
         self.im_pred_label.move(725, 90)
         self.im_pred_label.show()
 
-        # Framerate label.
-        self.framerate_label = QtWidgets.QLabel(self)
-        self.framerate_label.move(580, 145)
-        self.framerate_label.resize(50,40)
-        self.framerate_label.show()
+        # Prediction framerate label.
+        self.predict_framerate_label = QtWidgets.QLabel(self)
+        self.predict_framerate_label.move(930, 450)
+        self.predict_framerate_label.resize(50,40)
+        self.predict_framerate_label.show()
 
         # Button for configuring detection flow
         self.button_cont_detection = QtWidgets.QPushButton(self)
@@ -78,9 +84,10 @@ class GUI(QtWidgets.QWidget):
         self.logo_label.setPixmap(QtGui.QPixmap.fromImage(logo_img))
         self.logo_label.show()
 
-    def setCamera(self, cam):
+    def setCamera(self, cam, t_cam):
         ''' Declares the Camera object '''
         self.cam = cam
+        self.t_cam = t_cam
 
 
     def setNetwork(self, network, t_network):
@@ -104,7 +111,8 @@ class GUI(QtWidgets.QWidget):
         if self.t_network.is_activated:
             self.renderModifiedImage(self.im_prev)
 
-        self.framerate_label.setText("%d fps" % (self.t_network.framerate))
+        self.predict_framerate_label.setText("%d fps" % (self.t_network.framerate))
+        self.video_framerate_label.setText("%d fps" % (self.t_cam.framerate))
 
 
     def toggleNetwork(self):

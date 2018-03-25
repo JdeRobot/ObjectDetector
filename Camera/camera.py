@@ -35,7 +35,7 @@ class Camera:
                 self.im = self.cam.getImage()
                 self.im_height = self.im.height
                 self.im_width = self.im.width
-                
+
                 print('Image size: {0}x{1} px'.format(
                         self.im_width, self.im_height))
             else:
@@ -49,12 +49,9 @@ class Camera:
     def getImage(self):
         ''' Gets the image from the webcam and returns it. '''
         if self.cam:
-            self.lock.acquire()
             im = np.zeros((self.im_height, self.im_width, 3), np.uint8)
             im = np.frombuffer(self.im.data, dtype=np.uint8)
             im = np.reshape(im, (self.im_height, self.im_width, 3))
-
-            self.lock.release()
 
             return im
 
