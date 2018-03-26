@@ -1,18 +1,7 @@
 import tensorflow as tf
 import numpy as np
-import six.moves.urllib as urllib
-import sys
 import tarfile
-import zipfile
 import os
-import time
-import threading
-
-from datetime import datetime
-
-
-import cv2
-
 
 from utils import label_map_util
 
