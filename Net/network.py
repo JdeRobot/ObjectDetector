@@ -73,7 +73,6 @@ class DetectionNetwork():
 	def predict(self):
 		input_image = self.cam.getImage()
 		image_np_expanded = np.expand_dims(input_image, axis=0)
-		with tf.device('/device:GPU:0'):
-			(self.boxes, self.scores, self.classes, self.num) = self.sess.run(
-				[self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections],
-				feed_dict={self.image_tensor: image_np_expanded})
+		(self.boxes, self.scores, self.classes, self.num) = self.sess.run(
+			[self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections],
+			feed_dict={self.image_tensor: image_np_expanded})
