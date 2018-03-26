@@ -9,15 +9,9 @@
 # detected classes and scores, and the bounding boxes drawn on it.
 #
 
-import os
-import sys
-import random
 import traceback
 import threading
-
-import cv2
 import numpy as np
-import tensorflow as tf
 
 class Camera:
 
@@ -25,7 +19,6 @@ class Camera:
         ''' Camera class gets images from live video and transform them
         in order to predict the digit in the image.
         '''
-        status = 0
 
         self.cam = cam
         self.lock = threading.Lock()
@@ -44,7 +37,6 @@ class Camera:
         except:
             traceback.print_exc()
             exit()
-            status = 1
 
     def getImage(self):
         ''' Gets the image from the webcam and returns it. '''

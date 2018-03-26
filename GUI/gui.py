@@ -8,13 +8,10 @@
 #     master/gui/gui.py
 #
 
-import sys
 
 from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
-import cv2
-import config
 
 from Net.utils import visualization_utils as vis_util
 import numpy as np

@@ -7,8 +7,6 @@
 import time
 import threading
 from datetime import datetime
-import numpy as np
-
 
 
 class ThreadNetwork(threading.Thread):
