@@ -106,7 +106,7 @@ class GUI(QtWidgets.QWidget):
         self.im_label.setPixmap(QtGui.QPixmap.fromImage(self.im_scaled))
 
         if self.t_network.is_activated:
-            self.renderModifiedImage(self.im_prev)
+            self.renderModifiedImage()
 
         self.predict_framerate_label.setText("%d fps" % (self.t_network.framerate))
         self.video_framerate_label.setText("%d fps" % (self.t_cam.framerate))
@@ -122,16 +122,16 @@ class GUI(QtWidgets.QWidget):
 
     def updateOnce(self):
         self.t_network.runOnce()
-        self.renderModifiedImage(self.im_prev)
+        self.renderModifiedImage()
 
 
-    def renderModifiedImage(self, im):
+    def renderModifiedImage(self):
         detection_boxes = self.network.boxes
         detection_scores = self.network.scores
         detection_classes = self.network.classes
         num_detections = self.network.num
 
-        image_np = np.copy(im)
+        image_np = np.copy(self.im_prev)
 
 
         vis_util.visualize_boxes_and_labels_on_image_array(
