@@ -7,12 +7,13 @@ This is an early release, so it is based on an already downloaded model from Ten
 * [Protobuf installation](https://github.com/tensorflow/models/tree/master/research/object_detection) (read below).
 
 More dependencies might be installed automatically with the packages mentioned above.
+Additionally you might require to install some other dependencies. We have prepared a ```requirements.txt``` file, which you can run using ```pip install -r requirements.txt```
 
 ## Basement
 This component works over a library of TensorFlow pre-trained models, importing one of them and embedding it on the component developed [here](https://github.com/RoboticsURJC-students/2017-tfg-nacho_condes). Hence, to be able to run it, we have to install previously the ```protobufs``` provided with the models, following the installation guide.
 
 ## Behavioral
-For the moment, this node handles a real-time stream of video (incoming by an ICE/ROS proxy, automatically processed by the `comm` library), and shows a window displaying it, and also the output from the detection network. It provides a button for toggling on/off the real-time detection (TODO: implement another button to process a single frame on demand)
+For the moment, this node handles a real-time stream of video (incoming by an ICE/ROS proxy, automatically processed by the `comm` library), and shows a window displaying it, and also the output from the detection network. It provides a button for toggling on/off the real-time detection.
 
 ## How to Use
 Open Terminal and type ```cameraserver cameraserver.cfg```
