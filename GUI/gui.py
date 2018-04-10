@@ -13,8 +13,11 @@ from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-from Net.utils import visualization_utils as vis_util
+
 import numpy as np
+import cv2
+
+from Net.TensorFlow.utils import visualization_utils as vis_util
 
 
 class GUI(QtWidgets.QWidget):
@@ -27,7 +30,6 @@ class GUI(QtWidgets.QWidget):
         classification.
         '''
         QtWidgets.QWidget.__init__(self, parent)
-        self.setWindowTitle("JdeRobot-TensorFlow detector")
         self.resize(1200, 500)
         self.move(150, 50)
         self.setWindowIcon(QtGui.QIcon('GUI/resources/jderobot.png'))
@@ -81,6 +83,9 @@ class GUI(QtWidgets.QWidget):
         self.logo_label.setPixmap(QtGui.QPixmap.fromImage(logo_img))
         self.logo_label.show()
 
+
+
+
     def setCamera(self, cam, t_cam):
         ''' Declares the Camera object '''
         self.cam = cam
@@ -91,7 +96,18 @@ class GUI(QtWidgets.QWidget):
         ''' Declares the Network object and its corresponding control thread. '''
         self.network = network
         # Copy the category index fetched from the network
-        self.category_index = self.network.category_index
+        if self.network.framework == "TensorFlow":
+            self.category_index = self.network.category_index
+            self.setWindowTitle("JdeRobot-TensorFlow detector")
+
+        else:
+            self.setWindowTitle("JdeRobot-Keras detector")
+            from matplotlib import cm
+            self.colors = cm.jet
+            self.font = cv2.FONT_HERSHEY_SIMPLEX
+            self.scale = 0.7
+
+
         self.t_network = t_network
 
 
@@ -106,7 +122,12 @@ class GUI(QtWidgets.QWidget):
         self.im_label.setPixmap(QtGui.QPixmap.fromImage(self.im_scaled))
 
         if self.t_network.is_activated:
-            self.renderModifiedImage(self.im_prev)
+            if self.network.framework == "Keras":
+                self.renderModifiedImageKeras()
+            elif self.network.framework == "TensorFlow":
+                self.renderModifiedImageTF()
+            else:
+                raise SystemExit("Error, incorrect self.framework on network.py")
 
         self.predict_framerate_label.setText("%d fps" % (self.t_network.framerate))
         self.video_framerate_label.setText("%d fps" % (self.t_cam.framerate))
@@ -122,26 +143,71 @@ class GUI(QtWidgets.QWidget):
 
     def updateOnce(self):
         self.t_network.runOnce()
-        self.renderModifiedImage(self.im_prev)
+        if self.network.framework == "Keras":
+            self.renderModifiedImageKeras()
+        elif self.network.framework == "TensorFlow":
+            self.renderModifiedImageTF()
+        else:
+            raise SystemExit("Error, incorrect self.framework on network.py")
 
 
-    def renderModifiedImage(self, im):
+
+    def renderModifiedImageTF(self):
         detection_boxes = self.network.boxes
         detection_scores = self.network.scores
         detection_classes = self.network.classes
-        num_detections = self.network.num
 
-        image_np = np.copy(im)
+        image_np = np.copy(self.im_prev)
 
 
         vis_util.visualize_boxes_and_labels_on_image_array(
-        				image_np,
-        				np.squeeze(detection_boxes),
-        				np.squeeze(detection_classes).astype(np.int32),
-        				np.squeeze(detection_scores),
-        				self.category_index,
-        				use_normalized_coordinates=True,
-        				line_thickness=6)
+                        image_np,
+                        np.squeeze(detection_boxes),
+                        np.squeeze(detection_classes).astype(np.int32),
+                        np.squeeze(detection_scores),
+                        self.category_index,
+                        use_normalized_coordinates=True,
+                        line_thickness=6)
+
+
+        self.font = cv2.FONT_HERSHEY_SIMPLEX
+        im = QtGui.QImage(image_np.data, image_np.shape[1], image_np.shape[0],
+                          QtGui.QImage.Format_RGB888)
+
+        im_drawn = im.scaled(self.im_label.size())
+        self.im_pred_label.setPixmap(QtGui.QPixmap.fromImage(im_drawn))
+
+
+    def renderModifiedImageKeras(self):
+        image_np = np.copy(self.im_prev)
+
+        detection_boxes = self.network.boxes
+        detection_classes = self.network.predictions
+        detection_scores = self.network.scores
+
+        for index in range(len(detection_classes)):
+            _class = detection_classes[index]
+            score = detection_scores[index]
+            rect = detection_boxes[index]
+            xmin = rect[0]
+            ymin = rect[1]
+            xmax = rect[2]
+            ymax = rect[3]
+            cv2.rectangle(image_np, (xmin, ymax), (xmax, ymin), (0,255,0), 3)
+
+            label = "{0} ({1} %)".format(_class, int(score*100))
+
+            color = tuple(self.colors(self.network.classes.index(_class))[:-1])
+
+            [size, base] = cv2.getTextSize(label, self.font, self.scale, 2)
+
+            points = np.array([[[xmin, ymin + base],
+                                [xmin, ymin - size[1]],
+                                [xmin + size[0], ymin - size[1]],
+                                [xmin + size[0], ymin + base]]], dtype=np.int32)
+            cv2.fillPoly(image_np, points, color)
+            cv2.putText(image_np, label, (xmin, ymin), self.font, self.scale, (255, 255, 255), 2)
+
 
 
 
