@@ -25,7 +25,6 @@ from Camera.camera import Camera
 from Camera.threadcamera import ThreadCamera
 from GUI.gui import GUI
 from GUI.threadgui import ThreadGUI
-from Net.network import DetectionNetwork
 from Net.threadnetwork import ThreadNetwork
 
 import config
@@ -44,8 +43,17 @@ if __name__ == '__main__':
     jdrc = comm.init(cfg, 'ObjectDetector')
     proxy = jdrc.getCameraClient('ObjectDetector.Camera')
 
-    network_model = cfg.getNode()['Model']
+    framework = cfg.getProperty('Framework')
+    if framework.lower() == 'tensorflow':
+        from Net.TensorFlow.network import DetectionNetwork
+        network_model = cfg.getProperty('TFModel')
+    elif framework.lower() == 'keras':
+        sys.path.append('Net/Keras')
+        from Net.Keras.network import DetectionNetwork
+        network_model = cfg.getProperty('KerasModel')
 
+    else:
+        raise SystemExit(('%s not supported! Supported frameworks: Keras, TensorFlow') % (framework))
 
     cam = Camera(proxy)
     t_cam = ThreadCamera(cam)

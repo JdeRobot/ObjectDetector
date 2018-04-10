@@ -23,20 +23,16 @@ class Camera:
         self.cam = cam
         self.lock = threading.Lock()
 
-        try:
-            if self.cam.hasproxy():
-                self.im = self.cam.getImage()
-                self.im_height = self.im.height
-                self.im_width = self.im.width
+        if self.cam.hasproxy():
+            self.im = self.cam.getImage()
+            self.im_height = self.im.height
+            self.im_width = self.im.width
 
-                print('Image size: {0}x{1} px'.format(
-                        self.im_width, self.im_height))
-            else:
-                print("Interface camera not connected")
+            print('Image size: {0}x{1} px'.format(
+                    self.im_width, self.im_height))
+        else:
+            raise SystemExit("Interface camera not connected")
 
-        except:
-            traceback.print_exc()
-            exit()
 
     def getImage(self):
         ''' Gets the image from the webcam and returns it. '''
