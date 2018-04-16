@@ -1,15 +1,5 @@
-from keras import backend as K
-from keras.models import load_model
-from keras.preprocessing import image
-import numpy as np
-from PIL import Image
 import h5py
-
-from keras_loss_function.keras_ssd_loss import SSDLoss
-from keras_layers.keras_layer_AnchorBoxes import AnchorBoxes
-from keras_layers.keras_layer_DecodeDetections import DecodeDetections
 from keras.optimizers import Adam
-from keras_layers.keras_layer_L2Normalization import L2Normalization
 
 from Net.Keras.models.keras_ssd300 import ssd_300
 from Net.Keras.models.keras_ssd512 import ssd_512
@@ -76,13 +66,11 @@ def create_model(file, ssd_loss, n_classes):
                nms_max_output_size=400)
 
 	else:
-		print "other"
+		SystemExit('Error: unknown network size')
 
 	model.load_weights(file, by_name=True)
 
 	adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=5e-04)
-
-	ssd_loss = SSDLoss(neg_pos_ratio=3, n_neg_min=0, alpha=1.0)
 
 	model.compile(optimizer=adam, loss=ssd_loss.compute_loss)
 
