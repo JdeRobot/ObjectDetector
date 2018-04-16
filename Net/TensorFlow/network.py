@@ -44,6 +44,10 @@ class DetectionNetwork():
         self.detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
         self.num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 
+        self.boxes = []
+        self.scores = []
+        self.predictions = []
+
 
         # Dummy initialization (otherwise it takes longer then)
         dummy_tensor = np.zeros((1,1,1,3), dtype=np.int32)
