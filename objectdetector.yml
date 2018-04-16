@@ -6,14 +6,9 @@ ObjectDetector:
     Topic: "/usb_cam/image_raw"
     Name: cameraA
 
-Framework: TensorFlow  # Currently supported: "Keras" or "Tensorflow"
-
-KerasModel: full_model  # path to model
-
-TFModel:
-  MODEL_NAME: ssd_mobilenet_v1_coco_2017_11_17  # Name of model, same as the tar.gz file present in Net/TensorFlow Folder
-  CKPT: frozen_inference_graph.pb     # Frozen inference graph
-  LABELS: mscoco_label_map.pbtxt  # Labels file
-  NUM_CLASSES: 90
-
+Network:
+  Framework: Keras  # Currently supported: "Keras" or "TensorFlow"
+  Model: VGG_512_512_coco.h5
+  #Model: faster_rcnn_nas_coco_2018_01_28.pb
+  Dataset: COCO # available: VOC, COCO, KITTI, OID, PET
 NodeName: dl-digitclassifier
