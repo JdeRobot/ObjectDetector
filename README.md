@@ -32,6 +32,7 @@ Clone this repository, and you are ready to go!
 * Protobuf installation: the TensorFlow version of this component relies on `protobufs` to configure model parameters, so the Protobuf libraries must be compiled before using the component ([it's a single command :wink:](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md#protobuf-compilation)).
 
 More dependencies might be installed automatically with the packages mentioned above.
+Additionally you might require to install some other dependencies. We have prepared a ```requirements.txt``` file, which you can run using ```pip install -r requirements.txt```
 
 
 ## How to Use
