@@ -2,20 +2,38 @@ from keras import backend as K
 from keras.models import load_model
 from keras.preprocessing import image
 import numpy as np
+from PIL import Image
 
 from keras_loss_function.keras_ssd_loss import SSDLoss
 from keras_layers.keras_layer_AnchorBoxes import AnchorBoxes
 from keras_layers.keras_layer_DecodeDetections import DecodeDetections
 from keras_layers.keras_layer_L2Normalization import L2Normalization
+from Net.utils import label_map_util
 
-from PIL import Image
+
+
+LABELS_DICT = {'voc': 'Net/labels/pascal_label_map.pbtxt',
+               'coco': 'Net/labels/mscoco_label_map.pbtxt',
+               'kitti': 'Net/labels/kitti_label_map.txt',
+               'oid': 'Net/labels/oid_bboc_trainable_label_map.pbtxt',
+               'pet': 'Net/labels/pet_label_map.pbtxt'}
+
 
 
 class DetectionNetwork():
-    def __init__(self, net_model='full_model'):
+    def __init__(self, net_model):
         self.framework = "Keras"
+        # Parse the dataset to get which labels to yield
+        labels_file = LABELS_DICT[net_model['Dataset'].lower()]
+        label_map = label_map_util.load_labelmap(labels_file) # loads the labels map.
+        categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=100000)
+        category_index = label_map_util.create_category_index(categories)
+        self.classes = {}
+        # We build is as a dict because of gaps on the labels definitions
+        for cat in category_index:
+            self.classes[cat] = str(category_index[cat]['name'])
 
-        MODEL_FILE = 'Net/Keras/' + net_model + '.h5'
+        MODEL_FILE = 'Net/Keras/' + net_model['Model']
 
         ssd_loss = SSDLoss(neg_pos_ratio=3, n_neg_min=0, alpha=1.0)
 
@@ -25,19 +43,13 @@ class DetectionNetwork():
                                                            'L2Normalization': L2Normalization,
                                                            'DecodeDetections': DecodeDetections,
                                                            'compute_loss': ssd_loss.compute_loss})
-        except:
-            raise SystemExit('Incorrect or incomplete model details in YML file')
-
-        self.classes = ['background',
-                   'aeroplane', 'bicycle', 'bird', 'boat',
-                   'bottle', 'bus', 'car', 'cat',
-                   'chair', 'cow', 'diningtable', 'dog',
-                   'horse', 'motorbike', 'person', 'pottedplant',
-                   'sheep', 'sofa', 'train', 'tvmonitor']
+        except Exception as e:
+            SystemExit(e)
 
         # the Keras network works on 300x300 images. Reference sizes:
-        self.img_height = 300
-        self.img_width = 300
+        input_size = self.model.input.shape.as_list()
+        self.img_height = input_size[1]
+        self.img_width = input_size[2]
 
 
         # Output preallocation

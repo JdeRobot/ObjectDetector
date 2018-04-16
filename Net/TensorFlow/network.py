@@ -3,53 +3,37 @@ import numpy as np
 import tarfile
 import os
 
-from utils import label_map_util
+from Net.utils import label_map_util
+
+LABELS_DICT = {'voc': 'Net/labels/pascal_label_map.pbtxt',
+               'coco': 'Net/labels/mscoco_label_map.pbtxt',
+               'kitti': 'Net/labels/kitti_label_map.txt',
+               'oid': 'Net/labels/oid_bboc_trainable_label_map.pbtxt',
+               'pet': 'Net/labels/pet_label_map.pbtxt'}
 
 class DetectionNetwork():
-    ''' Class to create a tensorflow network, based on SSD detection trained on COCO dataset
-    (for the moment). At its creation, it imports the weight from the frozen model.'''
     def __init__(self, net_model):
         self.framework = "TensorFlow"
-        try:
-            # path to the downloaded model.
-            MODEL_NAME = 'Net/TensorFlow/' + net_model['MODEL_NAME']
-            # the class is called from the root dir of the project!
-            MODEL_FILE = MODEL_NAME + '.tar.gz'
 
-            # Frozen graph (inside the model).
-            CKPT = net_model['CKPT']
-
-            # Reference to the file containing the relationship between labels and ids
-            LABELS = net_model['LABELS']
-
-            NUM_CLASSES = net_model['NUM_CLASSES']
-
-        except:
-            raise SystemExit('Incorrect or incomplete model details in YML file')
-
-
-        # analysing the .tar model.
-        tar_file = tarfile.open(MODEL_FILE)
-        for file in tar_file.getmembers(): # checking if frozen graph exists.
-            file_name = os.path.basename(file.name)
-            if 'frozen_inference_graph.pb' in file_name:
-                tar_file.extract(file, os.getcwd() + '/Net/TensorFlow') # extract everything.
-
-        detection_graph = tf.Graph() # new graph instance.
-        with detection_graph.as_default():
-            od_graph_def = tf.GraphDef()
-            with tf.gfile.GFile((MODEL_NAME + '/' + CKPT), 'rb') as fid:
-                serialized_graph = fid.read()
-                od_graph_def.ParseFromString(serialized_graph)
-                tf.import_graph_def(od_graph_def, name='')
-
-        label_map = label_map_util.load_labelmap(('Net/TensorFlow/labels/' + LABELS)) # loads the labels map.
-        categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES)
+        labels_file = LABELS_DICT[net_model['Dataset'].lower()]
+        label_map = label_map_util.load_labelmap(labels_file) # loads the labels map.
+        categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes= 999999)
         category_index = label_map_util.create_category_index(categories)
         self.classes = {}
         # We build is as a dict because of gaps on the labels definitions
         for cat in category_index:
             self.classes[cat] = str(category_index[cat]['name'])
+
+        # Frozen inference graph, written on the file
+        CKPT = 'Net/TensorFlow/' + net_model['Model']
+        detection_graph = tf.Graph() # new graph instance.
+        with detection_graph.as_default():
+            od_graph_def = tf.GraphDef()
+            with tf.gfile.GFile(CKPT, 'rb') as fid:
+                serialized_graph = fid.read()
+                od_graph_def.ParseFromString(serialized_graph)
+                tf.import_graph_def(od_graph_def, name='')
+
 
         self.sess = tf.Session(graph=detection_graph)
         self.image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
