@@ -14,7 +14,8 @@
 This has been developed on a way which allows the Neural Network to be implemented as a Python class (`DetectionNetwork()`), which can be extracted from the component and used to load and use any kind of model, and even handle real-time and on-demand detection, via the thread (`ThreadNetwork()`). This can have really useful applications, some of which will be developed soon!
 
 <center>
-![alt text](https://roboticsurjc-students.github.io/2017-tfg-nacho_condes/Screens/objectdetector_fps.png "Object Detector working")
+  
+<img src="https://roboticsurjc-students.github.io/2017-tfg-nacho_condes/Screens/objectdetector_fps.png">Object Detector working</img>
 </center>
 
 ## Getting started
