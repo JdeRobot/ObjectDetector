@@ -1,6 +1,6 @@
 ObjectDetector:
   Camera:
-    Server: 1 # 0 -> Deactivate, 1 -> ICE, 2 -> ROS
+    Server: ice # "ROS", "ICE", "Deactivate"
     Proxy: "cameraA:tcp -h localhost -p 9999"
     Format: RGB8
     Topic: "/usb_cam/image_raw"

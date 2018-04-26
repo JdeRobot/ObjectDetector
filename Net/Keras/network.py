@@ -54,6 +54,7 @@ class DetectionNetwork():
                 SystemExit(e)
         else:
             print("Weights file detected. Creating a model and loading the weights into it...")
+            print "Model file: ", MODEL_FILE
             self.model = create_model_from_weights.create_model(MODEL_FILE,
                                                                 ssd_loss,
                                                                 len(self.classes))
