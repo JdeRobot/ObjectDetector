@@ -3,7 +3,7 @@
 #
 # @author: naxvm
 #
-# Class which abstracts a Camera from a local device,
+# Class which abstracts a Camera from a local video file,
 # and provides the methods to keep it constantly updated. Also, delivers it
 # to the neural network, which returns returns the same image with the
 # detected classes and scores, and the bounding boxes drawn on it.
@@ -12,15 +12,21 @@
 import traceback
 import threading
 import cv2
+from os import path
 
 class Camera:
 
-    def __init__ (self, device_idx):
+    def __init__ (self, video_path):
         ''' Camera class gets images from a video device and transform them
         in order to detect objects in the image.
         '''
         self.lock = threading.Lock()
-        self.cam = cv2.VideoCapture(device_idx)
+        video_path = path.expanduser(video_path)
+
+        if not path.isfile(video_path):
+            raise SystemExit('%s does not exists. Please check the path.' % (video_path))
+
+        self.cam = cv2.VideoCapture(video_path)
         if not self.cam.isOpened():
             print("%d is not a valid device index in this machine." % (device_idx))
             raise SystemExit("Please check your camera id (hint: ls /dev)")

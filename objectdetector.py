@@ -49,9 +49,10 @@ if __name__ == '__main__':
         print('  Chosen source: local camera (index %d)' % (cam_idx))
         cam = Camera(cam_idx)
     elif source.lower() == 'video':
-        ''' NOT IMPLEMENTED YET '''
+        from Camera.local_video import Camera
         video_path = cfg.getProperty('ObjectDetector.Video.Path')
         print('  Chosen source: local video (%s)' % (video_path))
+        cam = Camera(video_path)
     elif source.lower() == 'stream':
         # comm already prints the source technology (ICE/ROS)
         jdrc = comm.init(cfg, 'ObjectDetector')
