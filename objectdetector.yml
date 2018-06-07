@@ -2,7 +2,7 @@ ObjectDetector:
   Source: Local # Local (local camera), Video (local file), Stream (ROS/ICE)
 
   Local:
-    DeviceNo: 0 # Device number for the desired webcam
+    DeviceNo: 1 # Device number for the desired webcam
 
   Video:
     Path: "~/walking.mp4"

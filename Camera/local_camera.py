@@ -21,6 +21,10 @@ class Camera:
         '''
         self.lock = threading.Lock()
         self.cam = cv2.VideoCapture(device_idx)
+        if not self.cam.isOpened():
+            print("%d is not a valid device index in this machine." % (device_idx))
+            raise SystemExit("Please check your camera id (hint: ls /dev)")
+
         self.im_width = self.cam.get(3)
         self.im_height = self.cam.get(4)
 

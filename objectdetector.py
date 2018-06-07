@@ -21,7 +21,6 @@ import signal
 
 from PyQt5 import QtWidgets
 
-from Camera.camera import Camera
 from Camera.threadcamera import ThreadCamera
 from GUI.gui import GUI
 from GUI.threadgui import ThreadGUI
