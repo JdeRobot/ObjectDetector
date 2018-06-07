@@ -21,7 +21,6 @@ import signal
 
 from PyQt5 import QtWidgets
 
-from Camera.camera import Camera
 from Camera.threadcamera import ThreadCamera
 from GUI.gui import GUI
 from GUI.threadgui import ThreadGUI
@@ -34,16 +33,39 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 if __name__ == '__main__':
 
-
     try:
         cfg = config.load(sys.argv[1])
     except IndexError:
         raise SystemExit('Missing YML file. Usage: python2 objectdetector.py objectdetector.yml')
 
-    jdrc = comm.init(cfg, 'ObjectDetector')
-    proxy = jdrc.getCameraClient('ObjectDetector.Camera')
+    ##################################################
+    ################ SOURCE CHOICE ###################
+    ##################################################
+    source = cfg.getProperty('ObjectDetector.Source')
 
-    net_prop = cfg.getProperty('Network')
+    if source.lower() == 'local':
+        from Camera.local_camera import Camera
+        cam_idx = cfg.getProperty('ObjectDetector.Local.DeviceNo')
+        print('  Chosen source: local camera (index %d)' % (cam_idx))
+        cam = Camera(cam_idx)
+    elif source.lower() == 'video':
+        from Camera.local_video import Camera
+        video_path = cfg.getProperty('ObjectDetector.Video.Path')
+        print('  Chosen source: local video (%s)' % (video_path))
+        cam = Camera(video_path)
+    elif source.lower() == 'stream':
+        # comm already prints the source technology (ICE/ROS)
+        jdrc = comm.init(cfg, 'ObjectDetector')
+        proxy = jdrc.getCameraClient('ObjectDetector.Stream')
+        from Camera.stream_camera import Camera
+        cam = Camera(proxy)
+    else:
+        raise SystemExit(('%s not supported! Supported source: Local, Video, Stream') % (source))
+
+    ##################################################
+    ############### FRAMEWORK CHOICE #################
+    ##################################################
+    net_prop = cfg.getProperty('ObjectDetector.Network')
     framework = net_prop['Framework']
     if framework.lower() == 'tensorflow':
         from Net.TensorFlow.network import DetectionNetwork
@@ -53,9 +75,7 @@ if __name__ == '__main__':
     else:
         raise SystemExit(('%s not supported! Supported frameworks: Keras, TensorFlow') % (framework))
 
-
-
-    cam = Camera(proxy)
+    # Threading the camera...
     t_cam = ThreadCamera(cam)
     t_cam.start()
 
