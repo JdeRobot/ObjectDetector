@@ -17,7 +17,7 @@ class Camera:
 
     def __init__ (self, cam):
         ''' Camera class gets images from live video and transform them
-        in order to predict the digit in the image.
+        in order to detect objects in the image.
         '''
 
         self.cam = cam
@@ -44,7 +44,7 @@ class Camera:
             return im
 
     def update(self):
-        ''' Updates the camera every time the thread changes. '''
+        ''' Updates the camera with an incoming stream every time the thread changes. '''
         if self.cam:
             self.lock.acquire()
 

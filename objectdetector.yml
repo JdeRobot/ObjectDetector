@@ -1,14 +1,22 @@
 ObjectDetector:
-  Camera:
-    Server: ice # "ROS", "ICE", "Deactivate"
+  Source: Local # Local (local camera), Video (local file), Stream (ROS/ICE)
+
+  Local:
+    DeviceNo: 0 # Device number for the desired webcam
+
+  Video:
+    Path: "~/walking.mp4"
+
+  Stream:
+    Server: ICE # "ROS", "ICE", "Deactivate"
     Proxy: "cameraA:tcp -h localhost -p 9999"
     Format: RGB8
     Topic: "/usb_cam/image_raw"
     Name: cameraA
 
-Network:
-  Framework: TensorFlow  # Currently supported: "Keras" or "TensorFlow"
-  #Model: VGG_512_512_coco.h5
-  Model: ssd_mobilenet_v2_coco_2018_03_29.pb
-  Dataset: COCO # available: VOC, COCO, KITTI, OID, PET
+  Network:
+    Framework: TensorFlow  # Currently supported: "Keras" or "TensorFlow"
+    #Model: VGG_512_512_coco.h5
+    Model: ssd_mobilenet_v2_coco_2018_03_29.pb
+    Dataset: COCO # available: VOC, COCO, KITTI, OID, PET
 NodeName: dl-digitclassifier
