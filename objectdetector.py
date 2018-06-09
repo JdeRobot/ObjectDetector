@@ -18,6 +18,7 @@
 
 import sys
 import signal
+import yaml
 
 from PyQt5 import QtWidgets
 
@@ -26,35 +27,28 @@ from GUI.gui import GUI
 from GUI.threadgui import ThreadGUI
 from Net.threadnetwork import ThreadNetwork
 
-import config
-import comm
-
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-if __name__ == '__main__':
-
-    try:
-        cfg = config.load(sys.argv[1])
-    except IndexError:
-        raise SystemExit('Missing YML file. Usage: python2 objectdetector.py objectdetector.yml')
-
-    ##################################################
-    ################ SOURCE CHOICE ###################
-    ##################################################
-    source = cfg.getProperty('ObjectDetector.Source')
-
+def selectVideoSource(cfg):
+    """
+    @param cfg: configuration
+    @return cam: selected camera
+    @raise SystemExit in case of unsupported video source
+    """
+    source = cfg['ObjectDetector']['Source']
     if source.lower() == 'local':
         from Camera.local_camera import Camera
-        cam_idx = cfg.getProperty('ObjectDetector.Local.DeviceNo')
+        cam_idx = cfg['ObjectDetector']['Local']['DeviceNo']
         print('  Chosen source: local camera (index %d)' % (cam_idx))
         cam = Camera(cam_idx)
     elif source.lower() == 'video':
         from Camera.local_video import Camera
-        video_path = cfg.getProperty('ObjectDetector.Video.Path')
+        video_path = cfg['ObjectDetector']['Video']['Path']
         print('  Chosen source: local video (%s)' % (video_path))
         cam = Camera(video_path)
     elif source.lower() == 'stream':
         # comm already prints the source technology (ICE/ROS)
+        import comm
         jdrc = comm.init(cfg, 'ObjectDetector')
         proxy = jdrc.getCameraClient('ObjectDetector.Stream')
         from Camera.stream_camera import Camera
@@ -62,10 +56,15 @@ if __name__ == '__main__':
     else:
         raise SystemExit(('%s not supported! Supported source: Local, Video, Stream') % (source))
 
-    ##################################################
-    ############### FRAMEWORK CHOICE #################
-    ##################################################
-    net_prop = cfg.getProperty('ObjectDetector.Network')
+    return cam
+
+def selectNetwork(cfg):
+    """
+    @param cfg: configuration
+    @return net_prop, DetectionNetwork: network properties and Network class
+    @raise SystemExit in case of invalid network
+    """
+    net_prop = cfg['ObjectDetector']['Network']
     framework = net_prop['Framework']
     if framework.lower() == 'tensorflow':
         from Net.TensorFlow.network import DetectionNetwork
@@ -74,6 +73,23 @@ if __name__ == '__main__':
         from Net.Keras.network import DetectionNetwork
     else:
         raise SystemExit(('%s not supported! Supported frameworks: Keras, TensorFlow') % (framework))
+    return net_prop, DetectionNetwork
+
+def readConfig():
+    try:
+        with open(sys.argv[1], 'r') as stream:
+            return yaml.safe_load(stream)
+    except yaml.YAMLError as exc:
+        print(exc)
+        raise SystemExit('Error: Cannot read/parse YML file. Check YAML syntax.')
+    except:
+        raise SystemExit('\n\tUsage: python2 objectdetector.py objectdetector.yml\n')
+
+if __name__ == '__main__':
+
+    cfg = readConfig()
+    cam = selectVideoSource(cfg)
+    net_prop, DetectionNetwork = selectNetwork(cfg)
 
     # Threading the camera...
     t_cam = ThreadCamera(cam)
@@ -93,7 +109,6 @@ if __name__ == '__main__':
     # Threading GUI
     t_gui = ThreadGUI(window)
     t_gui.start()
-
 
     print("")
     print("Requested timers:")
