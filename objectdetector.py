@@ -49,6 +49,8 @@ def selectVideoSource(cfg):
     elif source.lower() == 'stream':
         # comm already prints the source technology (ICE/ROS)
         import comm
+        import config
+        cfg = config.load(sys.argv[1])
         jdrc = comm.init(cfg, 'ObjectDetector')
         proxy = jdrc.getCameraClient('ObjectDetector.Stream')
         from Camera.stream_camera import Camera
