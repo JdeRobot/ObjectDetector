@@ -16,6 +16,12 @@ from PyQt5 import QtWidgets
 
 import numpy as np
 import cv2
+from Net.utils import label_map_util
+
+
+COLORS = label_map_util.COLORS
+
+
 
 class GUI(QtWidgets.QWidget):
 
@@ -93,6 +99,13 @@ class GUI(QtWidgets.QWidget):
     def setNetwork(self, network, t_network):
         ''' Declares the Network object and its corresponding control thread. '''
         self.network = network
+        # We create the color dictionary for the bounding boxes.
+        self.net_classes = self.network.classes
+        self.colors = {}
+        idx = 0
+        for _class in self.net_classes.values():
+            self.colors[_class] = COLORS[idx]
+            idx =+ 1
 
         if self.network.framework == "TensorFlow":
             self.setWindowTitle("JdeRobot-TensorFlow detector")
@@ -147,7 +160,7 @@ class GUI(QtWidgets.QWidget):
             ymin = rect[1]
             xmax = rect[2]
             ymax = rect[3]
-            cv2.rectangle(image_np, (xmin, ymax), (xmax, ymin), (0,255,0), 3)
+            cv2.rectangle(image_np, (xmin, ymax), (xmax, ymin), self.colors[_class], 3)
 
             label = "{0} ({1} %)".format(_class, int(score*100))
             [size, base] = cv2.getTextSize(label, self.font, self.scale, 2)
