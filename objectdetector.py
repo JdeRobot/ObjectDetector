@@ -101,11 +101,13 @@ if __name__ == '__main__':
 
     # Threading the camera...
     t_cam = ThreadCamera(cam)
+    t_cam.setDaemon(True)
     t_cam.start()
 
     network = DetectionNetwork(net_prop)
     network.setCamera(cam)
     t_network = ThreadNetwork(network)
+    t_network.setDaemon(True)
     t_network.start()
 
     app = QtWidgets.QApplication(sys.argv)
@@ -116,6 +118,7 @@ if __name__ == '__main__':
 
     # Threading GUI
     t_gui = ThreadGUI(window)
+    t_gui.setDaemon(True)
     t_gui.start()
 
     print("")
