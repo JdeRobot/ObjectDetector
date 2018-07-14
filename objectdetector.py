@@ -55,8 +55,14 @@ def selectVideoSource(cfg):
         proxy = jdrc.getCameraClient('ObjectDetector.Stream')
         from Camera.stream_camera import Camera
         cam = Camera(proxy)
+    elif source == 'ROS':
+        from Camera.ros_camera import Camera
+        topic = cfg['ObjectDetector']['ROS']['Topic']
+        format = cfg['ObjectDetector']['ROS']['Format']
+        cam = Camera(topic, format)
     else:
-        raise SystemExit(('%s not supported! Supported source: Local, Video, Stream') % (source))
+        raise SystemExit(('%s not supported! Supported source:'
+                          'Local, Video, Stream, ROS') % (source))
 
     return cam
 
