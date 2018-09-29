@@ -1,0 +1,4 @@
+classes = 80
+names = Net/Darknet/data/coco.names
+eval = coco
+

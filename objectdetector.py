@@ -68,13 +68,17 @@ def selectNetwork(cfg):
     """
     net_prop = cfg['ObjectDetector']['Network']
     framework = net_prop['Framework']
+    # TODO: import network from the filesystem instead of using a hardcoded set
     if framework.lower() == 'tensorflow':
         from Net.TensorFlow.network import DetectionNetwork
     elif framework.lower() == 'keras':
         sys.path.append('Net/Keras')
         from Net.Keras.network import DetectionNetwork
+    elif framework.lower() == 'darknet':
+        sys.path.append('Net/Darknet/darknet')
+        from Net.Darknet.network import DetectionNetwork
     else:
-        raise SystemExit(('%s not supported! Supported frameworks: Keras, TensorFlow') % (framework))
+        raise SystemExit(('%s not supported! Supported frameworks: Keras, TensorFlow, Darknet') % (framework))
     return net_prop, DetectionNetwork
 
 def readConfig():
