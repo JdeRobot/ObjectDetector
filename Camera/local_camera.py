@@ -27,7 +27,7 @@ class Camera:
 
         self.im_width = self.cam.get(3)
         self.im_height = self.cam.get(4)
-
+        self.update()
 
     def getImage(self):
         ''' Gets the image from the webcam and returns it. '''

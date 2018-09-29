@@ -118,7 +118,12 @@ class GUI(QtWidgets.QWidget):
     def update(self):
         ''' Updates the GUI for every time the thread change '''
         # We get the original image and display it.
-        self.im_prev = self.cam.getImage()
+        try:
+            self.im_prev = self.cam.getImage()
+        except:
+            print("no image yet")
+            return
+
         im = QtGui.QImage(self.im_prev.data, self.im_prev.shape[1], self.im_prev.shape[0],
                           QtGui.QImage.Format_RGB888)
         self.im_scaled = im.scaled(self.im_label.size())
