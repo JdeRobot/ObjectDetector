@@ -149,29 +149,14 @@ def detect(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
 
 # Detect from numpy image
 def detect_from_image(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
-    # Make an empty image and copy the values
-    # I tried to pass a pointer to the floats but didn't know how
-    # If we really need to do this it should be in C
-    h = image.shape[0]
-    w = image.shape[1]
-    c = image.shape[2]
-    im = make_image(w, h, c)
-    for x in np.arange(w):
-        for y in np.arange(h):
-            for l in np.arange(c):
-                pixel = float(image[y, x, l]) / 255.
-                #set_pixel(im, x, y, l, pixel)
-                im.data[ l * im.h * im.w + y * im.w + x ] = pixel
+    im = IMAGE()
+    im.h = image.shape[0]
+    im.w = image.shape[1]
+    im.c = image.shape[2]
 
-    # im = IMAGE()
-    # im.h = image.shape[0]
-    # im.w = image.shape[1]
-    # im.c = image.shape[2]
-    # f_image = image.astype(float) / 255.
-    # #im.data = LP_c_float(f_image.ctypes.data)
-    # #im.data = byref(f_image.ctypes)
-    # LP_c_float = POINTER(c_float)
-    # im.data = byref(c_float(f_image[0, 0, 0]))
+    f_image = image.astype(np.float32) / 255.
+    f_image = f_image.transpose(2, 0, 1).flatten()
+    im.data = f_image.ctypes.data_as(POINTER(c_float))
 
     num = c_int(0)
     pnum = pointer(num)
@@ -187,7 +172,6 @@ def detect_from_image(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
                 b = dets[j].bbox
                 res.append((meta.names[i], dets[j].prob[i], (b.x, b.y, b.w, b.h)))
     res = sorted(res, key=lambda x: -x[1])
-    free_image(im)
     free_detections(dets, num)
     return res
 
