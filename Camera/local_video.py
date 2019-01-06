@@ -28,8 +28,8 @@ class Camera:
 
         self.cam = cv2.VideoCapture(video_path)
         if not self.cam.isOpened():
-            print("%d is not a valid device index in this machine." % (device_idx))
-            raise SystemExit("Please check your camera id (hint: ls /dev)")
+            print("%s is not a valid video file path." % (video_path))
+            raise SystemExit("Please check your the video file: %s" %(video_path))
 
         self.im_width = self.cam.get(3)
         self.im_height = self.cam.get(4)
