@@ -15,8 +15,12 @@ ObjectDetector:
     Name: cameraA
 
   Network:
-    Framework: TensorFlow  # Currently supported: "Keras" or "TensorFlow"
+    #Framework: Keras  # Currently supported: "Keras" or "TensorFlow"
     #Model: VGG_512_512_coco.h5
-    Model: ssdlite_mobilenet_v2_coco_2018_05_29.pb
+    #Model: full_model.h5
+
+    Framework: Darknet
+    Model: yolov3-tiny
+
     Dataset: COCO # available: VOC, COCO, KITTI, OID, PET
   NodeName: dl-objectdetector
