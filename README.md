@@ -21,6 +21,8 @@ This has been developed on a way which allows the Neural Network to be implement
 ## Getting started
 To get this component to work, you will need to install JdeRobot, Python (2.7 for the moment, due to ROS compatibility), and a few Python packages, installable via `python-pip`. See the [Requirements](#requirements) for more details.
 
+It is also tested on Python 3.5.2, due to compatibility with PyQt5, and it works fine.
+
 Clone this repository, and you are ready to go!
 
 `git clone https://github.com/JdeRobot/dl-objectdetector.git && cd dl-objectdetector`

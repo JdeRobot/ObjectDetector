@@ -1,7 +1,7 @@
 matplotlib
 Keras
 numpy
-tensorflow
+tensorflow==1.14
 h5py
 opencv_python
 six

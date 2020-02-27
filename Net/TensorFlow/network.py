@@ -34,11 +34,13 @@ class DetectionNetwork():
                 od_graph_def.ParseFromString(serialized_graph)
                 tf.import_graph_def(od_graph_def, name='')
 
+        '''
         # Set additional parameters for the TF session
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8)
         config = tf.ConfigProto(gpu_options=gpu_options,
                                 log_device_placement=False)
-        self.sess = tf.Session(graph=detection_graph, config=config)
+        '''
+        self.sess = tf.Session(graph=detection_graph)
         self.image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
         # NCHW conversion. not possible
         #self.image_tensor = tf.transpose(self.image_tensor, [0, 3, 1, 2])
