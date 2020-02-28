@@ -1,11 +1,12 @@
-matplotlib
-Keras
-numpy
+# matplotlib
+# Keras
+numpy==1.14 # to avoid deprecation warnings
 tensorflow
-h5py
-opencv_python
-six
+# h5py
+opencv-python
+# six
 Pillow
-PyQt5
-protobuf
-PyYAML
+cprint
+# PyQt5
+# protobuf
+# PyYAML

@@ -89,6 +89,8 @@ class GUI(QtWidgets.QWidget):
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.scale = 0.7
 
+        self.setWindowTitle("JdeRobot - ObjectDetector")
+
 
     def setCamera(self, cam, t_cam):
         ''' Declares the Camera object '''
@@ -106,11 +108,6 @@ class GUI(QtWidgets.QWidget):
         for _class in self.net_classes.values():
             self.colors[_class] = COLORS[idx]
             idx =+ 1
-
-        if self.network.framework == "TensorFlow":
-            self.setWindowTitle("JdeRobot-TensorFlow detector")
-        else:
-            self.setWindowTitle("JdeRobot-Keras detector")
 
         self.t_network = t_network
 
