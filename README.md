@@ -14,7 +14,7 @@
 As a result, this program constantly shows the image captured, and the detected objects on the most recent output of the network, yielding the detection score as well. This continuous behavioral can be easily stopped via a couple of buttons on the GUI, making inferences on demand.
 
 
-[!][Object Detector working](https://github.com/RoboticsLabURJC/2017-tfg-nacho_condes/blob/629b52af73313d39c6a753aae0cacea3d7c4e4ed/docs/Screens/objectdetector_fps.png)
+![Object Detector working](docs/images/objectdetector.png)
 
 ## Getting started
 To get this component to work, you will need to install JdeRobot, Python (2.7 for the moment, due to ROS compatibility), and a few Python packages, installable via `python-pip`. See the [Requirements](#requirements) for more details.
@@ -24,15 +24,6 @@ Clone this repository, and you are ready to go!
 `git clone https://github.com/JdeRobot/dl-objectdetector.git && cd dl-objectdetector`
 
 
-## Requirements
-<p>JdeRobot and ROS are only necessary if you use ROS/ICE video streams. You can run the component with a local webcam/video file (setting up the YML configuration file), with __no need to install ROS__</p>
-* JdeRobot ([installation guide](http://jderobot.org/Installation)).
-* Python 2.7: `sudo apt install python2`
-* Python packages (TensorFlow, Keras, etc.). One-click installing via ``pip``, using the `requirements.txt` file (`pip2 install -r requirements.txt`).
-* Protobuf installation: the TensorFlow version of this component relies on `protobufs` to configure model parameters, so the Protobuf libraries must be compiled before using the component ([it's a single command :wink:](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md#protobuf-compilation)).
-
-More dependencies might be installed automatically with the packages mentioned above.
-Additionally you might require to install some other dependencies. We have prepared a ```requirements.txt``` file, which you can run using ```pip install -r requirements.txt```
 
 ## Installation
 This component works on Ubuntu 18.04 and Python 3. In case you want to use inferences from a ROS topic, you will need the Melodic version of ROS, which can be installed [following the official steps](http://wiki.ros.org/melodic/Installation/Ubuntu).
