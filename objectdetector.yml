@@ -17,6 +17,6 @@ ObjectDetector:
   Network:
     Framework: TensorFlow  # Currently supported: "Keras" or "TensorFlow"
     #Model: VGG_512_512_coco.h5
-    Model: ssdlite_mobilenet_v2_coco_2018_05_29.pb
+    Model: ssd_mobilenet_v2_coco_2018_03_29.pb
     Dataset: COCO # available: VOC, COCO, KITTI, OID, PET
   NodeName: dl-objectdetector
