@@ -14,6 +14,11 @@ setuptools.setup(
      packages=setuptools.find_packages(),
      classifiers=[
          "Programming Language :: Python :: 2",
+         "Programming Language :: Python :: 3",
+         "Programming Language :: Python :: 3.6",
+         "Programming Language :: Python :: 3.7",
+         "Programming Language :: Python :: 3.8",
+         "Programming Language :: Cython"
          "Operating System :: OS Independent",
      ],
  )
