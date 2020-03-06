@@ -2,10 +2,6 @@
 import yaml
 import os
 from cprint import cprint
-from Camera.local_camera import Camera as LocalCamera
-from Camera.local_video import Camera as LocalVideo
-from Camera.roscam import ROSCam
-
 
 
 VALID_SOURCES = ['Local', 'Video', 'ROS', 'ICE']
@@ -24,17 +20,20 @@ def getVideoSource(source, params):
     """Return the camera abstract object to iterate the
     video source."""
     # Validate the source
+
     if source not in VALID_SOURCES:
         msg = f'The chosen source {source} is not supported. Please choose one of: {VALID_SOURCES}'
         cprint.fatal(msg, interrupt=True)
 
     if source == 'Local':
+        from Camera.local_camera import Camera as LocalCamera
         # Local camera device selected.
         cam_idx = params['DeviceNo']
         cprint.info(f'Selected device: local camera #{cam_idx}')
 
         cam = LocalCamera(cam_idx)
     elif source == 'Video':
+        from Camera.local_video import Camera as LocalVideo
         # Video file selected.
         video_path = os.path.expanduser(params['Path'])
         if not os.path.isfile(video_path):
@@ -43,6 +42,8 @@ def getVideoSource(source, params):
 
         cprint.info(f'Selected video: {video_path}')
         cam = LocalVideo(video_path)
+    else:
+        from Camera.roscam import ROSCam
     # source = cfg['ObjectDetector']['Source']
     # if source.lower() == 'local':
     #     from Camera.local_camera import Camera

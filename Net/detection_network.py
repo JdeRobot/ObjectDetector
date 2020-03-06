@@ -24,7 +24,7 @@ class DetectionNetwork:
             self.classes[cat] = str(category_index[cat]['name'])
 
         # Frozen inference graph, written on the file
-        CKPT = 'Net/' + net_model['Model']
+        CKPT = os.path.join('Net', 'Models', net_model['Model'])
         detection_graph = tf.compat.v1.Graph() # new graph instance.
         with detection_graph.as_default():
             od_graph_def = tf.compat.v1.GraphDef()

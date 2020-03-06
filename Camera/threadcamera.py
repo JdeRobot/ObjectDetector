@@ -16,8 +16,6 @@ from datetime import datetime
 
 class ThreadCamera(threading.Thread):
 
-
-
     def __init__(self, cam):
         ''' Threading class for Camera. '''
 
@@ -28,7 +26,7 @@ class ThreadCamera(threading.Thread):
 
     def run(self):
         ''' Updates the thread. '''
-        while(True):
+        while not self.cam.stop:
             start_time = datetime.now()
             self.cam.update()
             end_time = datetime.now()

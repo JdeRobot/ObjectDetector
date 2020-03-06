@@ -15,6 +15,6 @@ ICE:
   Name: cameraA
 
 Network:
-  Model: ssdlite_mobilenet_v2_coco_2018_05_29.pb
+  Model: ssdlite_mobilenet_v2_coco_2018_05_09.pb
   Dataset: COCO # available: VOC, COCO, KITTI, OID, PET
 NodeName: dl-objectdetector

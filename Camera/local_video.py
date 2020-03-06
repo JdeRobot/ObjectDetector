@@ -24,6 +24,7 @@ class Camera:
         self.lock = threading.Lock()
 
         self.cam = cv2.VideoCapture(video_path)
+        self.stop = False
         if not self.cam.isOpened():
             cprint.fatal(f'{video_path} is not a valid video file. Please check the video file', interrupt=True)
 
@@ -40,6 +41,9 @@ class Camera:
         ''' Updates the camera with a frame from the device every time the thread changes. '''
         if self.cam:
             self.lock.acquire()
-            _, frame = self.cam.read()
-            self.image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            ret, frame = self.cam.read()
+            if ret:
+                self.image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            else:
+                self.stop = True
             self.lock.release()

@@ -4,9 +4,8 @@
 
 1. [Introduction](#introduction)
 2. [Getting started](#getting-started)
-3. [Requirements](#requirements)
+3. [Installation](#installation)
 4. [How to use](#how-to-use)
-5. [Framework choice](#framework-choice)
 ## Introduction
 
 `dl-objectdetector` is a JdeRobot node, composed of 3 entities: `Camera`, `GUI` and `DetectionNetwork`, which have been implemented on an asynchronous design on devoted threads. This program grabs an image from a given source (typically a webcam or video or a remote source, using ROS), preprocesses it, and passes it forward an SSD object detection network.
@@ -17,11 +16,11 @@ As a result, this program constantly shows the image captured, and the detected 
 ![Object Detector working](docs/images/objectdetector.png)
 
 ## Getting started
-To get this component to work, you will need to install JdeRobot, Python (2.7 for the moment, due to ROS compatibility), and a few Python packages, installable via `python-pip`. See the [Requirements](#requirements) for more details.
+To get this component to work, you will need to install Python 3, several dependencies, and a few Python packages, installable via `python-pip`. See the [Installation](#installation) for more details.
 
 Clone this repository, and you are ready to go!
 
-`git clone https://github.com/JdeRobot/dl-objectdetector.git && cd dl-objectdetector`
+`git clone https://github.com/JdeRobot/ObjectDetector.git && cd dl-objectdetector`
 
 
 
@@ -41,6 +40,10 @@ pip3 install -r requirements.txt
 Execute this command using `sudo` if you are not using a virtual environment.
 
 ## How to Use
+
+You need to use a TensorFlow neural network on which running the inferences. [The TensorFlow Model Zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md) provides a set of models ready to work, you can choose another model apart of the one we provide, but make sure that it outputs __boxes__ (masks are not supported yet), and specify its dataset and the path to the `.pb` file containing the graph in `objectdetector.yml`.
+
+
 #### For a video stream (ICE/ROS):
 Under development.
 
