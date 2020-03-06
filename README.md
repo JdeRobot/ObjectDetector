@@ -8,7 +8,7 @@
 4. [How to use](#how-to-use)
 ## Introduction
 
-`dl-objectdetector` is a JdeRobot node, composed of 3 entities: `Camera`, `GUI` and `DetectionNetwork`, which have been implemented on an asynchronous design on devoted threads. This program grabs an image from a given source (typically a webcam or video or a remote source, using ROS), preprocesses it, and passes it forward an SSD object detection network.
+`ObjectDetector` is a JdeRobot node, composed of 3 entities: `Camera`, `GUI` and `DetectionNetwork`, which have been implemented on an asynchronous design on devoted threads. This program grabs an image from a given source (typically a webcam or video or a remote source, using ROS), preprocesses it, and passes it forward an SSD object detection network.
 
 As a result, this program constantly shows the image captured, and the detected objects on the most recent output of the network, yielding the detection score as well. This continuous behavioral can be easily stopped via a couple of buttons on the GUI, making inferences on demand.
 
@@ -20,7 +20,7 @@ To get this component to work, you will need to install Python 3, several depend
 
 Clone this repository, and you are ready to go!
 
-`git clone https://github.com/JdeRobot/ObjectDetector.git && cd dl-objectdetector`
+`git clone https://github.com/JdeRobot/ObjectDetector.git && cd ObjectDetector`
 
 
 
@@ -41,13 +41,13 @@ Execute this command using `sudo` if you are not using a virtual environment.
 
 ## How to Use
 
-You need to use a TensorFlow neural network on which running the inferences. [The TensorFlow Model Zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md) provides a set of models ready to work, you can choose another model apart of the one we provide, but make sure that it outputs __boxes__ (masks are not supported yet), and specify its dataset and the path to the `.pb` file containing the graph in `objectdetector.yml`.
+You need to use a TensorFlow neural network on which running the inferences. We provide in this repository a pre-trained model taken from [the TensorFlow Model Zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md). There you can find more models ready to work. You can choose a different one, but make sure that it outputs __boxes__ (masks are not supported yet), and specify its dataset and the path to the `.pb` file containing the graph in `objectdetector.yml`.
 
 
-#### For a video stream (ICE/ROS):
+#### Detections from a video stream (ICE/ROS):
 Under development.
 
-#### For a local camera/video file (OpenCV):
+#### Detections from a local camera/video file (OpenCV):
 
 Just type into the YML configuration file which device/file you want to use, and set the YML node `Source: Local` for a webcam or `Source: Video` for a video file.
 
@@ -55,5 +55,5 @@ Just type into the YML configuration file which device/file you want to use, and
 In another terminal type `python objectdetector.py objectdetector.yml`
 
 
-This will start the component, driven by the configuration parsed from the YML file (camera endpoint/topic, desired framework, model parameters).
+This will start the component, driven by the configuration parsed from the YML file (video source and neural network parameters).
 
