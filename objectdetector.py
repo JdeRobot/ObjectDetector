@@ -68,11 +68,10 @@ if __name__ == '__main__':
     t_gui = ThreadGUI(window)
     t_gui.start()
 
-    # print("")
-    # print("Requested timers:")
-    # print("    Camera: %d ms" % (t_cam.t_cycle))
-    # print("    GUI: %d ms" % (t_gui.t_cycle))
-    # print("    Network: %d ms" % (t_network.t_cycle))
-    # print("")
+    print('\nRequested framerates:')
+    print(f'\tCamera: {1000/t_cam.t_cycle} fps')
+    print(f'\tGUI: {1000/t_gui.t_cycle} fps')
+    print(f'\tNetwork: {1000/t_network.t_cycle} fps')
+    print('')
 
     sys.exit(app.exec_())
