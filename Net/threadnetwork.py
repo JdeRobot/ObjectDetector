@@ -13,12 +13,9 @@ class ThreadNetwork(threading.Thread):
 
 
     def __init__(self, network):
-        ''' Threading class for Camera. '''
-
-        self.t_cycle = 100  # ms
-
+        '''Threading class for Network.'''
+        self.t_cycle = 10  # ms
         self.network = network
-
         self.framerate = 0
         self.is_activated = True
 
@@ -28,6 +25,7 @@ class ThreadNetwork(threading.Thread):
     def run(self):
         ''' Updates the thread. '''
         while(True):
+            print(f'\rCurrent framerate: {self.framerate} fps', end='', flush=True)
             start_time = datetime.now()
             if self.is_activated:
                 self.network.predict()

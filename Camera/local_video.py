@@ -13,6 +13,7 @@ import traceback
 import threading
 import cv2
 from os import path
+import numpy as np
 
 class Camera:
 
@@ -21,19 +22,16 @@ class Camera:
         in order to detect objects in the image.
         '''
         self.lock = threading.Lock()
-        video_path = path.expanduser(video_path)
-
-        if not path.isfile(video_path):
-            raise SystemExit('%s does not exists. Please check the path.' % (video_path))
 
         self.cam = cv2.VideoCapture(video_path)
+        self.stop = False
         if not self.cam.isOpened():
-            print("%s is not a valid video file path." % (video_path))
-            raise SystemExit("Please check your the video file: %s" %(video_path))
+            cprint.fatal(f'{video_path} is not a valid video file. Please check the video file', interrupt=True)
 
-        self.im_width = self.cam.get(3)
-        self.im_height = self.cam.get(4)
-
+        self.im_width = int(self.cam.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.im_height = int(self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        # Initial placeholder
+        self.image = np.zeros((self.im_width, self.im_height, 3))
 
     def getImage(self):
         ''' Gets the image from the webcam and returns it. '''
@@ -43,6 +41,9 @@ class Camera:
         ''' Updates the camera with a frame from the device every time the thread changes. '''
         if self.cam:
             self.lock.acquire()
-            _, frame = self.cam.read()
-            self.image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            ret, frame = self.cam.read()
+            if ret:
+                self.image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            else:
+                self.stop = True
             self.lock.release()

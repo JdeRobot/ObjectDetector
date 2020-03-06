@@ -1,11 +1,5 @@
-matplotlib
-Keras
-numpy
-tensorflow==1.15.2
-h5py
-opencv_python
-six
+numpy==1.14 # to avoid deprecation warnings
+tensorflow==1.14.0
+opencv-python
 Pillow
-PyQt5
-protobuf
-PyYAML
+cprint

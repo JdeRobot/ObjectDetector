@@ -21,13 +21,13 @@ class ThreadGUI(threading.Thread):
         ''' Threading class for GUI. '''
 
         self.t_cycle = 50  # ms
-        
+
         self.gui = gui
         threading.Thread.__init__(self)
 
     def run(self):
         ''' Updates the thread. '''
-        while(True):
+        while not self.gui.cam.stop:
             start_time = datetime.now()
             self.gui.updGUI.emit()
             end_time = datetime.now()
@@ -37,3 +37,5 @@ class ThreadGUI(threading.Thread):
 
             if(dtms < self.t_cycle):
                 time.sleep((self.t_cycle - dtms) / 1000.0)
+        # Stop the execution
+

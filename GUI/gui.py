@@ -87,7 +87,9 @@ class GUI(QtWidgets.QWidget):
         self.logo_label.show()
 
         self.font = cv2.FONT_HERSHEY_SIMPLEX
-        self.scale = 0.7
+        self.scale = 3
+
+        self.setWindowTitle("JdeRobot - ObjectDetector")
 
 
     def setCamera(self, cam, t_cam):
@@ -106,11 +108,6 @@ class GUI(QtWidgets.QWidget):
         for _class in self.net_classes.values():
             self.colors[_class] = COLORS[idx]
             idx =+ 1
-
-        if self.network.framework == "TensorFlow":
-            self.setWindowTitle("JdeRobot-TensorFlow detector")
-        else:
-            self.setWindowTitle("JdeRobot-Keras detector")
 
         self.t_network = t_network
 
@@ -146,7 +143,9 @@ class GUI(QtWidgets.QWidget):
 
 
     def renderModifiedImage(self):
-        image_np = np.copy(self.im_prev)
+        factor = 2
+        new_size = (self.cam.im_width*factor, self.cam.im_height*factor)
+        image_np = cv2.resize(np.copy(self.im_prev), new_size)
 
         detection_boxes = self.network.boxes
         detection_classes = self.network.predictions
@@ -156,10 +155,10 @@ class GUI(QtWidgets.QWidget):
             _class = detection_classes[index]
             score = detection_scores[index]
             rect = detection_boxes[index]
-            xmin = rect[0]
-            ymin = rect[1]
-            xmax = rect[2]
-            ymax = rect[3]
+            xmin = rect[0] * factor
+            ymin = rect[1] * factor
+            xmax = rect[2] * factor
+            ymax = rect[3] * factor
             cv2.rectangle(image_np, (xmin, ymax), (xmax, ymin), self.colors[_class], 3)
 
             label = "{0} ({1} %)".format(_class, int(score*100))
