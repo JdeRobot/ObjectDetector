@@ -1,5 +1,5 @@
-numpy==1.14 # to avoid deprecation warnings
-tensorflow==1.14.0
-opencv-python
-Pillow
+numpy # to avoid deprecation warnings
+tensorflow
+opencv-python # if it doesn't work, install from source - "sudo apt install python3-opencv"
+Pillow==2.2.2
 cprint
