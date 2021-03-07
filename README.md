@@ -39,6 +39,7 @@ pip3 install -r requirements.txt
 ```
 Execute this command using `sudo` if you are not using a virtual environment.
 
+
 ## How to Use
 
 You need to use a TensorFlow neural network on which running the inferences. We provide in this repository a pre-trained model taken from [the TensorFlow Model Zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md). There you can find more models ready to work. You can choose a different one, but make sure that it outputs __boxes__ (masks are not supported yet), and specify its dataset and the path to the `.pb` file containing the graph in `objectdetector.yml`.
