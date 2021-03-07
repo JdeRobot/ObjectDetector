@@ -1,5 +1,5 @@
-numpy==1.14 # to avoid deprecation warnings
-tensorflow==1.14.0
+numpy~=1.19.2
+tensorflow==2.4.1
 opencv-python
 Pillow
 cprint
