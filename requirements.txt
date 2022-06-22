@@ -1,4 +1,4 @@
-numpy==1.21.0 # to avoid deprecation warnings
+numpy==1.22.0 # to avoid deprecation warnings
 tensorflow==2.7.2
 opencv-python
 Pillow
